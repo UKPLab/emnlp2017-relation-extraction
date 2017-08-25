@@ -3,9 +3,9 @@
 ## Relation extraction on an open-domain knowledge base
 
 
-Accompanying code for our EMNLP 2017 paper providing the code to replicate the experiments and the pre-trained models.
- 
-This repository contains experimental software and is published for the sole purpose of giving additional background details on the respective publication. 
+Accompanying repository for our **EMNLP 2017 paper**. It contains the code to replicate the experiments and the pre-trained models for sentence-level relation extraction.
+
+> This repository contains experimental software and is published for the sole purpose of giving additional background details on the respective publication.
  
 Please use the following citation:
 
@@ -23,9 +23,9 @@ Please use the following citation:
 ### Paper abstract:
 > We demonstrate that for sentence-level relation extraction it is beneficial to consider other relations in the sentential context while predicting the target relation. Our architecture uses an LSTM-based encoder to jointly learn representations for all relations in a single sentence. 
 We combine the context representations with an attention mechanism to make the final prediction. 
->We use the Wikidata knowledge base to construct a dataset of multiple relations per sentence and to evaluate our approach. Compared to a baseline system, our method results in an average error reduction of 24\% on a held-out set of relations.
+> We use the Wikidata knowledge base to construct a dataset of multiple relations per sentence and to evaluate our approach. Compared to a baseline system, our method results in an average error reduction of 24\% on a held-out set of relations.
 
-
+Please, refer to the paper for more details.
 
 The dataset described in the paper can be found here:
  * https://www.ukp.tu-darmstadt.de/data/
@@ -38,21 +38,63 @@ If you have any questions regarding the code, please, don't hesitate to contact 
   * https://www.tu-darmstadt.de
   
 ### Project structure:
+```
+relation_extraction/
+├── apply-model.py
+├── eval.py
+├── model-train-and-test.py
+├── notebooks
+├── optimization_space.py
+├── parsing
+│   ├── semanticparsing.py
+│   └── sp_models.py
+├── semanticgraph
+│   ├── graph_utils.py
+│   ├── io.py
+│   └── vis_utils.py
+├── stanford_tag_dataset.py
+└── utils
+    ├── embedding_utils.py
+    ├── evaluation_utils.py
+    └── graph.py
+resources/
+└── property_blacklist.txt
+```
 
+<table>
+    <tr>
+        <th>File</th><th>Description</th>
+    </tr>
+    <tr>
+        <td>relation_extraction/</td><td>Main Python module</td>
+    </tr>
+    <tr>
+        <td>relation_extraction/parsing</td><td>Models for joint relation extraction</td>
+    </tr>
+    <tr>
+        <td>relation_extraction/semanticgraph</td><td>IO and processing for relation graphs</td>
+    </tr>
+    <tr>
+        <td>relation_extraction/utils</td><td>IO and evaluation utils</td>
+    </tr>
+    <tr>
+        <td>resources/</td><td>Necessary resources</td>
+    </tr>
+</table>
 
 ### Setup:
 
-* We recommend that you setup a new pip environment first: http://docs.python-guide.org/en/latest/dev/virtualenvs/ 
+1. We recommend that you setup a new pip environment first: http://docs.python-guide.org/en/latest/dev/virtualenvs/
 
-* Check out the repository and run:
+2. Check out the repository and run:
 ```
 pip3 install -r requirements.txt
 ```
-* Set the Keras (deep learning library) backend to Theano (even deeper deep learning library) with the following command:
+3. Set the Keras (deep learning library) backend to Theano (even deeper deep learning library) with the following command:
 ```
 export KERAS_BACKEND=theano
 ```
-You can also permanently change Keras backend (read more: https://keras.io/backend/).
+   You can also permanently change Keras backend (read more: https://keras.io/backend/).
 
 #### Requirements:
 * Python 3.4
