@@ -3,7 +3,7 @@
 ## Relation extraction on an open-domain knowledge base
 
 
-Accompanying repository for our **EMNLP 2017 paper**. It contains the code to replicate the experiments and the pre-trained models for sentence-level relation extraction.
+Accompanying repository for our **EMNLP 2017 paper** ([full paper](https://www.ukp.tu-darmstadt.de/fileadmin/user_upload/Group_UKP/publikationen/2017/2017_EMNLP_DS_relation_extraction_camera_ready.pdf)). It contains the code to replicate the experiments and the pre-trained models for sentence-level relation extraction.
 
 > This repository contains experimental software and is published for the sole purpose of giving additional background details on the respective publication.
  
@@ -28,7 +28,7 @@ We combine the context representations with an attention mechanism to make the f
 Please, refer to the paper for more details.
 
 The dataset described in the paper can be found here:
- * https://www.ukp.tu-darmstadt.de/data/
+ * https://www.ukp.tu-darmstadt.de/data/lexical-resources/wikipedia-wikidata-relations/
  
  
 ### Contacts:
@@ -90,11 +90,14 @@ resources/
 ```
 pip3 install -r requirements.txt
 ```
+
 3. Set the Keras (deep learning library) backend to Theano (even deeper deep learning library) with the following command:
 ```
 export KERAS_BACKEND=theano
 ```
    You can also permanently change Keras backend (read more: https://keras.io/backend/).
+
+4. Download the [data](https://www.ukp.tu-darmstadt.de/data/lexical-resources/wikipedia-wikidata-relations/), if you want to replicate the experiments from the paper
 
 #### Requirements:
 * Python 3.4
