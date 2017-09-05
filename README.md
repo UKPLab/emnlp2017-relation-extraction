@@ -99,6 +99,10 @@ export KERAS_BACKEND=theano
 
 4. Download the [data](https://www.ukp.tu-darmstadt.de/data/lexical-resources/wikipedia-wikidata-relations/), if you want to replicate the experiments from the paper
 
+### Pre-trained models:
+* You can download the models that were used in the experiments (here)[https://www.ukp.tu-darmstadt.de/fileadmin/user_upload/Group_UKP/data/wikipediaWikidata/EMNLP2017_DS_IG_relation_extraction_trained_models.zip]
+* We will soon make available updated models and publish usage instructions
+
 #### Requirements:
 * Python 3.4
 * See requirements.txt for library requirements. 
