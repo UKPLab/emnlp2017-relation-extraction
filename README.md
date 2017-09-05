@@ -101,7 +101,7 @@ export KERAS_BACKEND=theano
 
 ### Pre-trained models:
 * You can download the models that were used in the experiments [here](https://www.ukp.tu-darmstadt.de/fileadmin/user_upload/Group_UKP/data/wikipediaWikidata/EMNLP2017_DS_IG_relation_extraction_trained_models.zip)
-* We will soon make available updated models and publish usage instructions
+* We will soon make available updated models and will publish usage instructions
 
 #### Requirements:
 * Python 3.4
