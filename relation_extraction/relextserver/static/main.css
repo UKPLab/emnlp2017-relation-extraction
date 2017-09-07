@@ -1,0 +1,132 @@
+/*
+ *  # coding: utf-8
+ *  # Copyright (C) 2017.  UKP lab
+ *  #
+ *  # Author: Daniil Sorokin (ukp.tu-darmstadt.de/ukp-home/)
+ *  # Licensed under the MIT license
+ *
+ */
+
+/* Body */
+html {
+    position: relative;
+    min-height: 100%;
+}
+body {
+    /* Margin bottom by footer height */
+    margin-bottom: 30px;
+}
+a {
+    cursor: pointer;
+}
+/* Bootstrap extensions */
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 30px;
+}
+.footer .row {
+    color: #777777;
+}
+.panel-default .panel-heading {
+    /*border-radius: 20px;*/
+    background-color: #ffffff;
+    border: 0;
+    color: gray;
+}
+.graph-thumbnail {
+    border: 1px solid white;
+}
+.graph-thumbnail:hover {
+    border: 1px solid #c0dbf8;
+}
+/* Elements */
+.answr {
+    display: inline-block;
+    margin: 5px;
+    border: 1px solid gray;
+}
+.inline-block {
+    display: inline-block;
+    margin: 8px;
+    padding: 7px;
+}
+.token-inline {
+    display: inline-block;
+    text-align: center;
+    vertical-align: text-top;
+    padding: 5px;
+}
+.token-inline > span {
+    display: block;
+}
+.token-inline .text-inline {
+    border-bottom: 2px dotted #5bc0de;
+    margin-bottom: 5px;
+}
+.token-inline .tag-inline {
+    color: #5bc0de;
+    font-weight: bold;
+}
+.token-inline .tag-ne {
+    color: #337ab7;
+}
+
+.selected {
+    border: 1px solid forestgreen;
+}
+
+/* Semantic graphs*/
+.node {
+    fill: #ccc;
+    stroke: #fff;
+    stroke-width: 2px;
+    cursor: move;
+}
+.qnode {
+    fill: #4677f8;
+    stroke: #fff;
+    stroke-width: 2px;
+    cursor: move;
+}
+.rel-label > rect,
+.node-label > rect{
+    fill: #f2f2f2;
+    stroke: #fff;
+    stroke-width: 2px;
+}
+
+.link {
+    stroke: #777;
+    stroke-width: 2px;
+}
+
+/* Graph vectors*/
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+.dot-question {
+    fill: #4677f8;
+}
+.dot-graph {
+    fill: #1bd2f8;
+}
+.dot-graph-relevant {
+    fill: #850711;;
+}
+
+.scattertext {
+    color: #777777;
+    font-size: 3pt;
+}
+
+/* CNN Weights*/
+.weight-line{
+    fill: none;
+    /*stroke: #761c19;*/
+    stroke-width: 3px;
+}

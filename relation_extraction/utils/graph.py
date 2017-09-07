@@ -153,27 +153,6 @@ def extract_entities(tokens_ne_pos):
 
     :param tokens_ne_pos: list of POS and NE tags.
     :return: list of entities in the order: NE>NNP>NN
-    >>> extract_entities([('who', 'O', 'WP'), ('are', 'O', 'VBP'), ('the', 'O', 'DT'), ('current', 'O', 'JJ'), ('senators', 'O', 'NNS'), ('from', 'O', 'IN'), ('missouri', 'LOCATION', 'NNP'), ('?', 'O', '.')])
-    [(['Missouri'], 'LOCATION'), (['current', 'senators'], 'NN')]
-    >>> extract_entities([('what', 'O', 'WDT'), ('awards', 'O', 'NNS'), ('has', 'O', 'VBZ'), ('louis', 'PERSON', 'NNP'), ('sachar', 'PERSON', 'NNP'), ('won', 'O', 'NNP'), ('?', 'O', '.')])
-    [(['Louis', 'Sachar'], 'PERSON'), (['Won'], 'NNP'), (['awards'], 'NN')]
-    >>> extract_entities([('who', 'O', 'WP'), ('was', 'O', 'VBD'), ('the', 'O', 'DT'), ('president', 'O', 'NN'), ('after', 'O', 'IN'), ('jfk', 'O', 'NNP'), ('died', 'O', 'VBD'), ('?', 'O', '.')])
-    [(['president', 'after', 'jfk'], 'NN')]
-    >>> extract_entities([('who', 'O', 'WP'), ('natalie', 'PERSON', 'NN'), ('likes', 'O', 'VBP')])
-    [(['Natalie'], 'PERSON')]
-    >>> extract_entities([('what', 'O', 'WDT'), ('character', 'O', 'NN'), ('did', 'O', 'VBD'), ('john', 'O', 'NNP'), \
-    ('noble', 'O', 'NNP'), ('play', 'O', 'VB'), ('in', 'O', 'IN'), ('lord', 'O', 'NNP'), ('of', 'O', 'IN'), ('the', 'O', 'DT'), ('rings', 'O', 'NNS'), ('?', 'O', '.')])
-    [(['John', 'Noble'], 'NNP'), (['character'], 'NN'), (['lord', 'of', 'the', 'rings'], 'NN')]
-    >>> extract_entities([['who', 'O', 'WP'], ['plays', 'O', 'VBZ'], ['lois', 'PERSON', 'NNP'], ['lane', 'PERSON', 'NNP'], ['in', 'O', 'IN'], ['superman', 'O', 'NNP'], ['returns', 'O', 'NNS'], ['?', 'O', '.']])
-    [(['Lois', 'Lane'], 'PERSON'), (['superman', 'returns'], 'NN')]
-    >>> extract_entities([('the', 'O', 'DT'), ('empire', 'O', 'NN'), ('strikes', 'O', 'VBZ'), ('back', 'O', 'RB'), ('is', 'O', 'VBZ'), ('the', 'O', 'DT'), ('second', 'O', 'JJ'), ('movie', 'O', 'NN'), ('in', 'O', 'IN'), ('the', 'O', 'DT'), ('star', 'O', 'NN'), ('wars', 'O', 'NNS'), ('franchise', 'O', 'VBP')])
-    [(['empire'], 'NN'), (['second', 'movie'], 'NN'), (['star', 'wars'], 'NN')]
-    >>> extract_entities([['who', 'O', 'WP'], ['played', 'O', 'VBD'], ['cruella', 'LOCATION', 'NNP'], ['deville', 'LOCATION', 'NNP'], ['in', 'O', 'IN'], ['102', 'O', 'CD'], ['dalmatians', 'O', 'NNS'], ['?', 'O', '.']])
-    [(['Cruella', 'Deville'], 'LOCATION'), (['102', 'dalmatians'], 'NN')]
-    >>> extract_entities([['who', 'O', 'WP'], ['was', 'O', 'VBD'], ['the', 'O', 'DT'], ['winner', 'O', 'NN'], ['of', 'O', 'IN'], ['the', 'O', 'DT'], ['2009', 'O', 'CD'], ['nobel', 'O', 'NNP'], ['peace', 'O', 'NNP'], ['prize', 'O', 'NNP'], ['?', 'O', '.']])
-    [(['Nobel', 'Peace', 'Prize'], 'NNP'), (['winner'], 'NN'), (['2009'], 'CD')]
-    >>> extract_entities([['who', 'O', 'WP'], ['is', 'O', 'VBZ'], ['the', 'O', 'DT'], ['senator', 'O', 'NN'], ['of', 'O', 'IN'], ['connecticut', 'LOCATION', 'NNP'], ['2010', 'O', 'CD'], ['?', 'O', '.']])
-    [(['Connecticut'], 'LOCATION'), (['senator'], 'NN'), (['2010'], 'CD')]
     """
     persons = extract_entities_from_tagged([(w, t) for w, t, _ in tokens_ne_pos], ['PERSON'])
     locations = extract_entities_from_tagged([(w, t) for w, t, _ in tokens_ne_pos], ['LOCATION'])
@@ -195,6 +174,13 @@ def extract_entities(tokens_ne_pos):
             ne_vertices.append((nn, 'NNP'))
     return ne_vertices + vertices
 
+
+def generate_edges(vertices):
+    edges = []
+    for i, v1 in enumerate(vertices):
+        for v2 in vertices[i+1:]:
+            edges.append({'left': v1[0], 'right': v2[0]})
+    return edges
 
 if __name__ == "__main__":
     # Testing
