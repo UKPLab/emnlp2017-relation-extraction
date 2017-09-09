@@ -5,56 +5,67 @@
 #
 import numpy as np
 np.random.seed(1)
+import h5py
+import json
 
 from parsing import sp_models
 from semanticgraph import graph_utils
 import keras.models
 import ast
 from utils import embedding_utils
+max_sent_len = 36
 
 
 class RelParser:
 
-    def __init__(self, relext_model_name, data_folder="../../data/", embeddings_location="glove/glove.6B.50d.txt"):
+    def __init__(self, relext_model_name, data_folder="../data/", models_foldes="../trainedmodels/",
+                 embeddings_location="glove/glove.6B.50d.txt", ):
 
-        self._model = keras.models.load_model(data_folder + "keras-models/" + relext_model_name + ".kerasmodel")
-        self._property2idx = {}
-
-        with open(data_folder + "keras-models/" + relext_model_name + ".property2idx") as f:
+        with open(models_foldes + relext_model_name + ".property2idx") as f:
             self._property2idx = ast.literal_eval(f.read())
 
-        self._max_sent_len = self._model.get_input_shape_at(0)[0][1]
+        with open("model_params.json") as f:
+            model_params = json.load(f)
 
         self._embeddings, self._word2idx = embedding_utils.load(data_folder + embeddings_location)
         print("Loaded embeddings:", self._embeddings.shape)
         self._idx2word = {v: k for k, v in self._word2idx.items()}
 
-        with open(data_folder + "properties-with-labels.txt") as infile:
+        self._model = sp_models.model_RnnMarkersScoredGhosts(model_params,
+                                                             np.zeros((len(self._word2idx), 50), dtype='float32'),
+                                                             max_sent_len, len(self._property2idx))
+
+        with h5py.File(models_foldes + relext_model_name + ".kerasmodel", mode='r') as f:
+            self._model.load_weights_from_hdf5_group(f['model_weights'])
+
+        with open("../resources/properties-with-labels.txt") as infile:
             self._property2label = {l.split("\t")[0] : l.split("\t")[1].strip() for l in infile.readlines()}
         self._idx2property = {v: k for k, v in self._property2idx.items()}
 
-        self._graphs_to_indices = sp_models.to_indices
-        if "Ghost" in relext_model_name:
-            self._graphs_to_indices = sp_models.to_indices_with_ghost_entities
-        elif "CNN" in relext_model_name:
+        self._graphs_to_indices = sp_models.to_indices_with_real_entities
+        if "CNN" in relext_model_name:
             self._graphs_to_indices = sp_models.to_indices_with_relative_positions
 
     def sem_parse(self, g, verbose=False):
         if verbose:
             print(" ".join(g['tokens']))
 
-        data_as_indices = self._graphs_to_indices([g], self._word2idx, self._property2idx, self._max_sent_len, mode="test")
+        data_as_indices = list(self._graphs_to_indices([g], self._word2idx, self._property2idx, max_sent_len, mode="test"))
         probabilities = self._model.predict(data_as_indices[:-1], verbose=0)
-        classes = np.argmax(probabilities, axis = 1)
-        edge_set = []
+        if len(probabilities) == 0:
+            return None
+        probabilities = probabilities[0]
+        classes = np.argmax(probabilities, axis=1)
         for i, e in enumerate(g['edgeSet']):
-            e['kbID'] = self._idx2property[classes[i]]
-            e["lexicalInput"] = self._property2label[e['kbID']] if e['kbID'] in self._property2label else embedding_utils.all_zeroes
-            edge_set.append(e)
-            if verbose:
-                graph_utils.print_edge(e, g)
-                sorted_probabilities = sorted(enumerate(probabilities[i]), key=lambda x: x[1], reverse=True)
-                print("{} ({:.4}), {}".format(e['kbID'], np.max(probabilities[i]),
-                                              [(self._idx2property[p_id], p_prob) for p_id, p_prob in sorted_probabilities[1:4]]))
-        g['edgeSet'] = edge_set
+            if i < len(probabilities):
+                e['kbID'] = self._idx2property[classes[i]]
+                e["lexicalInput"] = self._property2label[e['kbID']] if e['kbID'] in self._property2label else embedding_utils.all_zeroes
+                if verbose:
+                    graph_utils.print_edge(e, g)
+                    sorted_probabilities = sorted(enumerate(probabilities[i]), key=lambda x: x[1], reverse=True)
+                    print("{} ({:.4}), {}".format(e['kbID'], np.max(probabilities[i]),
+                                                  [(self._idx2property[p_id], p_prob) for p_id, p_prob in sorted_probabilities[1:4]]))
+            else:
+                e['kbID'] = "P0"
+                e["lexicalInput"] = embedding_utils.all_zeroes
         return g
