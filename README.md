@@ -37,6 +37,12 @@ If you have any questions regarding the code, please, don't hesitate to contact 
   * https://www.ukp.tu-darmstadt.de
   * https://www.tu-darmstadt.de
   
+### Demo:
+
+You can try out the model on single sentences in our demo: 
+
+http://semanticparsing.ukp.informatik.tu-darmstadt.de:5000/
+
 ### Project structure:
 ```
 relation_extraction/
