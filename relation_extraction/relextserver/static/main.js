@@ -3,7 +3,7 @@
  *  # Copyright (C) 2017.  UKP lab
  *  #
  *  # Author: Daniil Sorokin (ukp.tu-darmstadt.de/ukp-home/)
- *  # Licensed under the MIT license
+ *  # Licensed under Apache License Version 2.0
  */
 
 var TheApp = {};
