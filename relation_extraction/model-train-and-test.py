@@ -63,6 +63,15 @@ def evaluate(model, input, gold_output):
     return predictions_classes
 
 
+def load_the_model(model_name, model_params, embeddings, max_sent_len, n_out):
+    import h5py
+    print("Loading the best model")
+    model = getattr(sp_models, model_name)(model_params, embeddings, max_sent_len, n_out)
+    f = h5py.File(data_folder + "keras-models/" + model_name + ".kerasmodel", mode='r')
+    model.load_weights_from_hdf5_group(f['model_weights'])
+    return model
+
+
 if __name__ == "__main__":
     import argparse
 
@@ -149,11 +158,8 @@ if __name__ == "__main__":
         print("Training the model")
         if "plus" in mode:
             print("Load model")
-            model = load_model(data_folder + "keras-models/" + model_name + ".kerasmodel",
-                               custom_objects={"GetOutput": sp_models.GetOutput,
-                                               "MaskedConvolution1D": sp_models.MaskedConvolution1D,
-                                               "GlobalSumPooling1D": sp_models.GlobalSumPooling1D,
-                                               "MaskedGlobalMaxPooling1D": sp_models.MaskedGlobalMaxPooling1D})
+            model = load_the_model(model_name, model_params, embeddings, max_sent_len, n_out)
+
         else:
             print("Initialize the model")
             model = getattr(sp_models, model_name)(model_params, embeddings, max_sent_len, n_out)
@@ -187,11 +193,7 @@ if __name__ == "__main__":
             json.dump([(t['misc']['vals'], t['result']) for t in trials.trials], ftf)
 
     if "test" in mode:
-        print("Loading the best model")
-        model = load_model(data_folder + "keras-models/" + model_name + ".kerasmodel",
-                           custom_objects={
-                                           "MaskedConvolution1D": MaskedConvolution1D,
-                                           "MaskedGlobalMaxPooling1D": MaskedGlobalMaxPooling1D})
+        model = load_the_model(model_name, model_params, embeddings, max_sent_len, n_out)
 
         print("Testing")
         print("Results on the training set")
