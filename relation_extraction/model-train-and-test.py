@@ -207,9 +207,7 @@ if __name__ == "__main__":
         print("Results on the test set")
         test_set, _ = io.load_relation_graphs_from_file(
             data_folder + args.test_set)
-        test_set = sp_models.graphs_for_evaluation(test_set, test_tagged)
         test_as_indices = list(graphs_to_indices(
             test_set, word2idx, property2idx, max_sent_len, embeddings=embeddings, position2idx=position2idx))
-        test_predicted_classes = evaluate(model, test_as_indices[:-1], test_as_indices[-1])
-        with open(data_folder + args.model_name + "_held_out_predictions.json", "w") as f:
-            json.dump(test_predicted_classes.tolist(), f)
+        evaluate(model, test_as_indices[:-1], test_as_indices[-1])
+
