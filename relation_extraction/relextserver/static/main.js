@@ -56,7 +56,7 @@ TheApp.request.post = function(url, postdata){
 };
 
 TheApp.request.post_input_text = function(question_text) {
-    return TheApp.request.post("/parse/", question_text);
+    return TheApp.request.post("/relation-extraction/parse/", question_text);
 };
 
 /* Updating interface */
