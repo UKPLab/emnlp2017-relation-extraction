@@ -1,28 +1,20 @@
-from collections import deque
-
-from flask import Flask, request, url_for, redirect
-from flask_cors import CORS
+from flask import Blueprint, request, url_for, redirect
 import json
 import logging
-from datetime import datetime
 
-import numpy as np
 from pycorenlp import StanfordCoreNLP
 
-from keras.models import load_model
-from utils import embedding_utils, graph
+from relation_extraction.utils import graph
+from relation_extraction.parsing.semanticparsing import RelParser
 
-from parsing import sp_models
+relext = Blueprint("relext_server", __name__, static_folder='static')
 
-from parsing.semanticparsing import RelParser
-
-app = Flask(__name__)
-CORS(app)
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.ERROR)
 logger.setLevel(logging.DEBUG)
 
-relparser = RelParser("model_ContextWeighted")
+relparser = RelParser("model_ContextWeighted", models_foldes="relation-extraction/trainedmodels/",
+                      data_folder="relation-extraction/data/", resource_folder="relation-extraction/resources/")
 
 corenlp = StanfordCoreNLP('http://localhost:9000')
 corenlp_properties = {
@@ -31,13 +23,13 @@ corenlp_properties = {
 }
 
 
-@app.route("/")
+@relext.route("/")
 def hello():
-    return redirect(url_for('static', filename='index.html'))
+    return redirect(url_for('relext_server.static', filename='index.html'))
 
 
-@app.route("/parse/", methods=['GET', 'POST'])
-def answer_question():
+@relext.route("/parse/", methods=['GET', 'POST'])
+def parse_sentence():
     if request.method == 'POST':
         input_text = request.json.get("inputtext")
         logger.debug("Processing the request")

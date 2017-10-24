@@ -10,13 +10,10 @@ np.random.seed(1)
 from keras import layers, models
 from keras import backend as K
 from keras import regularizers
-
-from utils import embedding_utils
-from utils import graph
-
 import tqdm
 
-from semanticgraph import graph_utils
+from relation_extraction.utils import embedding_utils, graph
+from relation_extraction.semanticgraph import graph_utils
 
 RESOURCES_FOLDER = "../resources/"
 property_blacklist = embedding_utils.load_blacklist(RESOURCES_FOLDER + "property_blacklist.txt")

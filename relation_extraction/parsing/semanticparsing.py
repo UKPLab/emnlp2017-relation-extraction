@@ -5,26 +5,31 @@
 #
 import numpy as np
 np.random.seed(1)
+
 import h5py
 import json
-
-from parsing import sp_models
-from semanticgraph import graph_utils
-import keras.models
 import ast
-from utils import embedding_utils
+import os
+
+from relation_extraction.parsing import sp_models
+from relation_extraction.semanticgraph import graph_utils
+from relation_extraction.utils import embedding_utils
+
 max_sent_len = 36
 
 
 class RelParser:
 
     def __init__(self, relext_model_name, data_folder="../data/", models_foldes="../trainedmodels/",
-                 embeddings_location="glove/glove.6B.50d.txt", ):
+                 embeddings_location="glove/glove.6B.50d.txt", resource_folder="../resources/"):
 
         with open(models_foldes + relext_model_name + ".property2idx") as f:
             self._property2idx = ast.literal_eval(f.read())
 
-        with open("model_params.json") as f:
+        module_location = os.path.abspath(__file__)
+        module_location = os.path.dirname(module_location)
+
+        with open(os.path.join(module_location, "../model_params.json")) as f:
             model_params = json.load(f)
 
         self._embeddings, self._word2idx = embedding_utils.load(data_folder + embeddings_location)
@@ -38,7 +43,7 @@ class RelParser:
         with h5py.File(models_foldes + relext_model_name + ".kerasmodel", mode='r') as f:
             self._model.load_weights_from_hdf5_group(f['model_weights'])
 
-        with open("../resources/properties-with-labels.txt") as infile:
+        with open(resource_folder + "properties-with-labels.txt") as infile:
             self._property2label = {l.split("\t")[0] : l.split("\t")[1].strip() for l in infile.readlines()}
         self._idx2property = {v: k for k, v in self._property2idx.items()}
 
