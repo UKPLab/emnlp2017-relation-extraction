@@ -41,7 +41,7 @@ If you have any questions regarding the code, please, don't hesitate to contact 
 
 You can try out the model on single sentences in our demo: 
 
-http://semanticparsing.ukp.informatik.tu-darmstadt.de:5000/
+http://semanticparsing.ukp.informatik.tu-darmstadt.de:5000/relation-extraction/
 
 ### Project structure:
 ```
@@ -54,6 +54,8 @@ relation_extraction/
 ├── parsing
 │   ├── semanticparsing.py
 │   └── sp_models.py
+├── relextserver
+│   └── server.py
 ├── semanticgraph
 │   ├── graph_utils.py
 │   ├── io.py
@@ -76,6 +78,9 @@ resources/
     </tr>
     <tr>
         <td>relation_extraction/parsing</td><td>Models for joint relation extraction</td>
+    </tr>
+    <tr>
+        <td>relation_extraction/relextserver</td><td>The code for the web demo.</td>
     </tr>
     <tr>
         <td>relation_extraction/semanticgraph</td><td>IO and processing for relation graphs</td>
@@ -104,6 +109,10 @@ export KERAS_BACKEND=theano
    You can also permanently change Keras backend (read more: https://keras.io/backend/).
 
 4. Download the [data](https://www.ukp.tu-darmstadt.de/data/lexical-resources/wikipedia-wikidata-relations/), if you want to replicate the experiments from the paper
+
+#### Notes
+
+- The web demo code is provided for information only. It is not meant to be run elsewhere.
 
 ### Pre-trained models:
 * You can download the models that were used in the experiments [here](https://www.ukp.tu-darmstadt.de/fileadmin/user_upload/Group_UKP/data/wikipediaWikidata/EMNLP2017_DS_IG_relation_extraction_trained_models.zip)
