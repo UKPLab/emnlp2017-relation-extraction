@@ -16,7 +16,7 @@ logger.setLevel(logging.DEBUG)
 relparser = RelParser("model_ContextWeighted", models_foldes="relation-extraction/trainedmodels/",
                       data_folder="relation-extraction/data/", resource_folder="relation-extraction/resources/")
 
-corenlp = StanfordCoreNLP('http://localhost:9000')
+corenlp = StanfordCoreNLP('http://semanticparsing:9000')
 corenlp_properties = {
     'annotators': 'tokenize, pos, ner',
     'outputFormat': 'json'
