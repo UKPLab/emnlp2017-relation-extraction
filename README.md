@@ -52,8 +52,8 @@ relation_extraction/
 ├── notebooks
 ├── optimization_space.py
 ├── parsing
-│   ├── semanticparsing.py
-│   └── sp_models.py
+│   ├── parser.py
+│   └── keras_models.py
 ├── relextserver
 │   └── server.py
 ├── semanticgraph
@@ -91,6 +91,9 @@ resources/
     <tr>
         <td>resources/</td><td>Necessary resources</td>
     </tr>
+    <tr>
+        <td>data/curves/</td><td>The precision-recall curves for each model on the held out data</td>
+    </tr>
 </table>
 
 ### Setup:
@@ -108,7 +111,27 @@ export KERAS_BACKEND=theano
 ```
    You can also permanently change Keras backend (read more: https://keras.io/backend/).
 
-4. Download the [data](https://www.ukp.tu-darmstadt.de/data/lexical-resources/wikipedia-wikidata-relations/), if you want to replicate the experiments from the paper
+4. Download the [data](https://www.ukp.tu-darmstadt.de/data/lexical-resources/wikipedia-wikidata-relations/), if you want to replicate the experiments from the paper.
+Extract the archive inside `emnlp2017-relation-extraction/data/wikipedia-wikidata/`.
+
+5. Download the [GloVe embeddings, glove.6B.zip](https://nlp.stanford.edu/projects/glove/)
+and put them into the folder `emnlp2017-relation-extraction/resources/glove/`.
+
+6. Set the Theano flags:
+```
+ export THEANO_FLAGS=mode=FAST_RUN,device=cpu,floatX=float32
+```
+
+#### Reproducing the experiments from the paper
+
+1. Complete the setup above 
+
+2. Run `python model-train-and-test.py` in `emnlp2017-relation-extraction/relation_extraction/` to see the list of parameters
+
+3. If you put the data into teh default folders you can train the `ContextWeighted` model with the following command:
+```
+python model-train-and-test.py model_ContextWeighted --mode train-test
+```
 
 #### Notes
 
