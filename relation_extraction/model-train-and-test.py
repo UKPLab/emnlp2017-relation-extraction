@@ -8,12 +8,10 @@ from utils import evaluation_utils, embedding_utils
 import numpy as np
 np.random.seed(1)
 
-from parsing import sp_models
-from parsing.sp_models import MaskedConvolution1D, MaskedGlobalMaxPooling1D
+from parsing import keras_models
 from keras import callbacks
 from keras.utils import np_utils
 from semanticgraph import io
-from keras.models import load_model
 import hyperopt as hy
 import json
 import ast
@@ -23,7 +21,7 @@ p0_index = 1
 
 
 def f_train(params):
-    model = getattr(sp_models, model_name)(params, embeddings, max_sent_len, n_out)
+    model = getattr(keras_models, model_name)(params, embeddings, max_sent_len, n_out)
     callback_history = model.fit(train_as_indices[:-1],
                                  [train_y_properties_one_hot],
                                  nb_epoch=20, batch_size=256 if params['gpu'] else 200, verbose=1,
@@ -66,8 +64,8 @@ def evaluate(model, input, gold_output):
 def load_the_model(model_name, model_params, embeddings, max_sent_len, n_out):
     import h5py
     print("Loading the best model")
-    model = getattr(sp_models, model_name)(model_params, embeddings, max_sent_len, n_out)
-    f = h5py.File(data_folder + "keras-models/" + model_name + ".kerasmodel", mode='r')
+    model = getattr(keras_models, model_name)(model_params, embeddings, max_sent_len, n_out)
+    f = h5py.File(args.models_folder + model_name + ".kerasmodel", mode='r')
     model.load_weights_from_hdf5_group(f['model_weights'])
     return model
 
@@ -79,32 +77,29 @@ if __name__ == "__main__":
     parser.add_argument('model_name')
     parser.add_argument('--mode', default="train-test", choices=['train-test', 'train', 'test', 'optimize',
                                                                  'train-plus-test'])
-    parser.add_argument('--data_folder', default="../../../data/")
+    parser.add_argument('--models_folder', default="../trainedmodels/")
     parser.add_argument('--model_params', default="model_params.json")
-    parser.add_argument('--word_embeddings', default="glove/glove.6B.50d.txt")
-    parser.add_argument('--train_set', default="training-data/semantic-graphs-filtered-training.02_06.json")
-    parser.add_argument('--val_set', default="training-data/semantic-graphs-filtered-validation.02_06.json")
-    parser.add_argument('--test_set', default="training-data/semantic-graphs-filtered-held-out.02_06.json")
+    parser.add_argument('--word_embeddings', default="../resources/glove/glove.6B.50d.txt")
+    parser.add_argument('--train_set', default="../data/wikipedia-wikidata/enwiki-20160501/semantic-graphs-filtered-training.02_06.json")
+    parser.add_argument('--val_set', default="../data/wikipedia-wikidata/enwiki-20160501/semantic-graphs-filtered-validation.02_06.json")
+    parser.add_argument('--test_set', default="../data/wikipedia-wikidata/enwiki-20160501/semantic-graphs-filtered-held-out.02_06.json")
     parser.add_argument('--property_index')
     parser.add_argument('-s', action='store_true', help="Use only a portion of the training and validation sets.")
 
     args = parser.parse_args()
 
-    data_folder = args.data_folder
     model_name = args.model_name
     mode = args.mode
 
     with open(args.model_params) as f:
         model_params = json.load(f)
 
-    embeddings, word2idx = embedding_utils.load(data_folder + args.word_embeddings)
+    embeddings, word2idx = embedding_utils.load(args.word_embeddings)
     print("Loaded embeddings:", embeddings.shape)
 
-    training_data, _ = io.load_relation_graphs_from_file(
-        data_folder + args.train_set, load_vertices=True)
+    training_data, _ = io.load_relation_graphs_from_file(args.train_set, load_vertices=True)
 
-    val_data, _ = io.load_relation_graphs_from_file(
-        data_folder + args.val_set, load_vertices=True)
+    val_data, _ = io.load_relation_graphs_from_file(args.val_set, load_vertices=True)
 
     if args.s:
         training_data = training_data[:len(training_data) // 3]
@@ -114,11 +109,11 @@ if __name__ == "__main__":
 
     if mode in ['test', 'train-plus-test']:
         print("Reading the property index")
-        with open(data_folder + "keras-models/" + model_name + ".property2idx") as f:
+        with open(args.models_folder + model_name + ".property2idx") as f:
             property2idx = ast.literal_eval(f.read())
     elif args.property_index:
         print("Reading the property index from parameter")
-        with open(data_folder + args.property_index) as f:
+        with open(args.property_index) as f:
             property2idx = ast.literal_eval(f.read())
     else:
         _, property2idx = embedding_utils.init_random({e["kbID"] for g in training_data
@@ -131,12 +126,12 @@ if __name__ == "__main__":
 
     
     to_one_hot = np_utils.to_categorical
-    graphs_to_indices = sp_models.to_indices
-    if "Ghost" in model_name:
+    graphs_to_indices = keras_models.to_indices
+    if "Context" in model_name:
         to_one_hot = embedding_utils.timedistributed_to_one_hot
-        graphs_to_indices = sp_models.to_indices_with_real_entities
+        graphs_to_indices = keras_models.to_indices_with_real_entities
     elif "CNN" in model_name:
-        graphs_to_indices = sp_models.to_indices_with_relative_positions
+        graphs_to_indices = keras_models.to_indices_with_relative_positions
 
     _, position2idx = embedding_utils.init_random(np.arange(-max_sent_len, max_sent_len), 1, add_all_zeroes=True)
     train_as_indices = list(graphs_to_indices(training_data, word2idx, property2idx, max_sent_len,
@@ -152,7 +147,7 @@ if __name__ == "__main__":
 
     if "train" in mode:
         print("Save property dictionary.")
-        with open(data_folder + "keras-models/" + model_name + ".property2idx", 'w') as outfile:
+        with open(args.models_folder + model_name + ".property2idx", 'w') as outfile:
             outfile.write(str(property2idx))
 
         print("Training the model")
@@ -162,7 +157,7 @@ if __name__ == "__main__":
 
         else:
             print("Initialize the model")
-            model = getattr(sp_models, model_name)(model_params, embeddings, max_sent_len, n_out)
+            model = getattr(keras_models, model_name)(model_params, embeddings, max_sent_len, n_out)
 
         train_y_properties_one_hot = to_one_hot(train_as_indices[-1], n_out)
         val_y_properties_one_hot = to_one_hot(val_as_indices[-1], n_out)
@@ -174,7 +169,7 @@ if __name__ == "__main__":
                                          val_as_indices[:-1], val_y_properties_one_hot),
                                      callbacks=[callbacks.EarlyStopping(monitor="val_loss", patience=3, verbose=1),
                                                 callbacks.ModelCheckpoint(
-                                                    data_folder + "keras-models/" + model_name + ".kerasmodel",
+                                                    args.models_folder + model_name + ".kerasmodel",
                                                     monitor='val_loss', verbose=1, save_best_only=True)])
     elif mode == "optimize":
         import optimization_space
@@ -189,7 +184,7 @@ if __name__ == "__main__":
         print("Best trial:", best)
         print("Details:", trials.best_trial)
         print("Saving trials.")
-        with open(data_folder + "trials/" + model_name + "_final_trails.json", 'w') as ftf:
+        with open("../data/trials/" + model_name + "_final_trails.json", 'w') as ftf:
             json.dump([(t['misc']['vals'], t['result']) for t in trials.trials], ftf)
 
     if "test" in mode:
@@ -201,13 +196,8 @@ if __name__ == "__main__":
         print("Results on the validation set")
         evaluate(model, val_as_indices[:-1], val_as_indices[-1])
 
-        with open(data_folder + "training-data/semantic-graphs-filtered-held-out.tagged.json") as f:
-            test_tagged = json.load(f)
-
         print("Results on the test set")
-        test_set, _ = io.load_relation_graphs_from_file(
-            data_folder + args.test_set)
+        test_set, _ = io.load_relation_graphs_from_file(args.test_set)
         test_as_indices = list(graphs_to_indices(
             test_set, word2idx, property2idx, max_sent_len, embeddings=embeddings, position2idx=position2idx))
         evaluate(model, test_as_indices[:-1], test_as_indices[-1])
-

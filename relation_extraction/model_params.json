@@ -1,13 +1,9 @@
 {"rnn1": "LSTM",
   "rnn1_layers": 1,
-  "penultimate_layers": 0,
   "units1": 256,
-  "units2": 128,
   "dropout1": 0.5,
   "optimizer": "adam",
   "window_size": 3,
-  "memory_merge": "concat",
   "position_emb": 3,
-  "gpu": true,
-  "contex.sum": "sum"
+  "gpu": true
 }

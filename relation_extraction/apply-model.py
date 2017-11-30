@@ -6,7 +6,7 @@
 
 from utils import embedding_utils
 import numpy as np
-from parsing import sp_models
+from parsing import keras_models
 from semanticgraph import io
 from keras.models import load_model
 import json
@@ -51,8 +51,8 @@ if __name__ == "__main__":
     max_graph_size = 7
     print("Max graph size set to: {}".format(max_graph_size))
 
-    val_sentence_matrix, val_entity_matrix, _ = sp_models.graphs_to_indices(val_data, word2idx, property2idx,
-                                                                          max_sent_len, max_graph_size, mode="test")
+    val_sentence_matrix, val_entity_matrix, _ = keras_models.graphs_to_indices(val_data, word2idx, property2idx,
+                                                                               max_sent_len, max_graph_size, mode="test")
     print("Loading the model")
     model = load_model(data_folder + "keras-models/" + model_name + ".kerasmodel")
 

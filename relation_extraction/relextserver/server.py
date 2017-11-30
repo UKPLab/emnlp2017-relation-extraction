@@ -5,7 +5,7 @@ import logging
 from pycorenlp import StanfordCoreNLP
 
 from relation_extraction.utils import graph
-from relation_extraction.parsing.semanticparsing import RelParser
+from relation_extraction.parsing.parser import RelParser
 
 relext = Blueprint("relext_server", __name__, static_folder='static')
 

@@ -56,8 +56,8 @@ def micro_avg_precision(guessed, correct, empty = None):
         if guessed[idx] != empty:
             count += 1
             if guessed[idx] == correct[idx]:
-                correctCount +=1
-        idx +=1
+                correctCount += 1
+        idx += 1
     precision = 0
     if count > 0:    
         precision = correctCount / count

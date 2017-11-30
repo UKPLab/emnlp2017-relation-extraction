@@ -20,13 +20,13 @@ if __name__ == "__main__":
     data_folder = "../data/"
 
     relations_data, _ = io.load_relation_graphs_from_file(
-        "/home/local/UKP/sorokin/IdeaProjects/semantic-parsing-training-data-pipeline/data/training-data/semantic-graphs-filtered-training.02_06.json", load_vertices=False)
+        "../data/wikipedia-wikidata/enwiki-20160501/semantic-graphs-filtered-training.02_06.json", load_vertices=False)
     logging.debug('Loaded, size: {}'.format(len(relations_data)))
 
-    ne_tagger = nltk.tag.stanford.StanfordNERTagger("/home/local/UKP/sorokin/IdeaProjects/question-answering/resources/models-3.7.0/edu/stanford/nlp/models/ner/english.all.3class.caseless.distsim.crf.ser.gz",
-                                                    path_to_jar = "/home/local/UKP/sorokin/IdeaProjects/question-answering/resources/stanford-ner-2015-12-09/stanford-ner-3.6.0.jar")
-    pos_tagger = nltk.tag.stanford.StanfordPOSTagger("/home/local/UKP/sorokin/IdeaProjects/question-answering/resources/models-3.7.0/edu/stanford/nlp/models/pos-tagger/english-caseless-left3words-distsim.tagger",
-                                                     path_to_jar = "/home/local/UKP/sorokin/IdeaProjects/question-answering/resources/stanford-postagger-full-2015-12-09/stanford-postagger-3.6.0.jar")
+    ne_tagger = nltk.tag.stanford.StanfordNERTagger("../resources/stanfordcorenlp/models-3.7.0/edu/stanford/nlp/models/ner/english.all.3class.caseless.distsim.crf.ser.gz",
+                                                    path_to_jar = "../resources/stanfordcorenlp/stanford-ner-2015-12-09/stanford-ner-3.6.0.jar")
+    pos_tagger = nltk.tag.stanford.StanfordPOSTagger("../resources/stanfordcorenlp/models-3.7.0/edu/stanford/nlp/models/pos-tagger/english-caseless-left3words-distsim.tagger",
+                                                     path_to_jar = "../resources/stanfordcorenlp/stanford-postagger-full-2015-12-09/stanford-postagger-3.6.0.jar")
     webquestions_utterances_tokens = [q_obj['tokens'] for q_obj in relations_data]
     logging.debug('Tokenized')
     webquestions_utterances_nes = []
@@ -40,6 +40,6 @@ if __name__ == "__main__":
                                                   list(zip(*webquestions_utterances_nes[i]))[1],
                                                   list(zip(*webquestions_utterances_poss[i]))[1])) for i, tokens in enumerate(webquestions_utterances_tokens)]
 
-    with open("/home/local/UKP/sorokin/IdeaProjects/semantic-parsing-training-data-pipeline/data/training-data/semantic-graphs-filtered-training.tagged.json", "w") as out:
+    with open("../data/wikipedia-wikidata/enwiki-20160501/semantic-graphs-filtered-training.tagged.json", "w") as out:
         json.dump(webquestions_utterances_alltagged, out, indent=4)
     logger.debug("Saved")

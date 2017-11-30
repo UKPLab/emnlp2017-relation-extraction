@@ -182,6 +182,7 @@ def generate_edges(vertices):
             edges.append({'left': v1[0], 'right': v2[0]})
     return edges
 
+
 if __name__ == "__main__":
     # Testing
     import doctest

@@ -11,7 +11,7 @@ import json
 import ast
 import os
 
-from relation_extraction.parsing import sp_models
+from relation_extraction.parsing import keras_models
 from relation_extraction.semanticgraph import graph_utils
 from relation_extraction.utils import embedding_utils
 
@@ -36,9 +36,9 @@ class RelParser:
         print("Loaded embeddings:", self._embeddings.shape)
         self._idx2word = {v: k for k, v in self._word2idx.items()}
 
-        self._model = sp_models.model_RnnMarkersScoredGhosts(model_params,
-                                                             np.zeros((len(self._word2idx), 50), dtype='float32'),
-                                                             max_sent_len, len(self._property2idx))
+        self._model = keras_models.model_ContextWeighted(model_params,
+                                                         np.zeros((len(self._word2idx), 50), dtype='float32'),
+                                                         max_sent_len, len(self._property2idx))
 
         with h5py.File(models_foldes + relext_model_name + ".kerasmodel", mode='r') as f:
             self._model.load_weights_from_hdf5_group(f['model_weights'])
@@ -47,9 +47,9 @@ class RelParser:
             self._property2label = {l.split("\t")[0] : l.split("\t")[1].strip() for l in infile.readlines()}
         self._idx2property = {v: k for k, v in self._property2idx.items()}
 
-        self._graphs_to_indices = sp_models.to_indices_with_real_entities
+        self._graphs_to_indices = keras_models.to_indices_with_real_entities
         if "CNN" in relext_model_name:
-            self._graphs_to_indices = sp_models.to_indices_with_relative_positions
+            self._graphs_to_indices = keras_models.to_indices_with_relative_positions
 
     def sem_parse(self, g, verbose=False):
         if verbose:
