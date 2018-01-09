@@ -109,7 +109,8 @@ pip3 install -r requirements.txt
 ```
 export KERAS_BACKEND=theano
 ```
-   You can also permanently change Keras backend (read more: https://keras.io/backend/).
+   You can also permanently change Keras backend (read more: https://keras.io/backend/). 
+   Note that in order to reproduce the experiments in the paper you have to use Theano as a backend.
 
 4. Download the [data](https://www.ukp.tu-darmstadt.de/data/lexical-resources/wikipedia-wikidata-relations/), if you want to replicate the experiments from the paper.
 Extract the archive inside `emnlp2017-relation-extraction/data/wikipedia-wikidata/`.
