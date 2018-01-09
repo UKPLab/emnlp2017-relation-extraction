@@ -3,11 +3,13 @@
 #
 # Author: Daniil Sorokin (ukp.tu-darmstadt.de/ukp-home/)
 #
+# This script was used to tag the Wikipedia distantly supervised data with part-of-speech tags using
+# the Stanford Core NLP toolkit.
 
 import nltk
 import json
 import logging
-from semanticgraph import io
+from graph import io
 import tqdm
 
 logging.basicConfig(level=logging.DEBUG)

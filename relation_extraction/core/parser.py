@@ -6,14 +6,13 @@
 import numpy as np
 np.random.seed(1)
 
-import h5py
 import json
 import ast
 import os
 
-from relation_extraction.parsing import keras_models
-from relation_extraction.semanticgraph import graph_utils
-from relation_extraction.utils import embedding_utils
+from relation_extraction.core import keras_models
+from relation_extraction.graph import graph_utils
+from core import embeddings
 
 max_sent_len = 36
 
@@ -32,7 +31,7 @@ class RelParser:
         with open(os.path.join(module_location, "../model_params.json")) as f:
             model_params = json.load(f)
 
-        self._embeddings, self._word2idx = embedding_utils.load(embeddings_location)
+        self._embeddings, self._word2idx = embeddings.load(embeddings_location)
         print("Loaded embeddings:", self._embeddings.shape)
         self._idx2word = {v: k for k, v in self._word2idx.items()}
 
@@ -63,7 +62,7 @@ class RelParser:
         for i, e in enumerate(g['edgeSet']):
             if i < len(probabilities):
                 e['kbID'] = self._idx2property[classes[i]]
-                e["lexicalInput"] = self._property2label[e['kbID']] if e['kbID'] in self._property2label else embedding_utils.all_zeroes
+                e["lexicalInput"] = self._property2label[e['kbID']] if e['kbID'] in self._property2label else embeddings.all_zeroes
                 if verbose:
                     graph_utils.print_edge(e, g)
                     sorted_probabilities = sorted(enumerate(probabilities[i]), key=lambda x: x[1], reverse=True)
@@ -71,5 +70,5 @@ class RelParser:
                                                   [(self._idx2property[p_id], p_prob) for p_id, p_prob in sorted_probabilities[1:4]]))
             else:
                 e['kbID'] = "P0"
-                e["lexicalInput"] = embedding_utils.all_zeroes
+                e["lexicalInput"] = embeddings.all_zeroes
         return g

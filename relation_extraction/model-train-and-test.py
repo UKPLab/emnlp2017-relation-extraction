@@ -4,14 +4,14 @@
 # Author: Daniil Sorokin (ukp.tu-darmstadt.de/ukp-home/)
 #
 
-from utils import evaluation_utils, embedding_utils
+from evaluation import metrics
 import numpy as np
 np.random.seed(1)
 
-from parsing import keras_models
+from core import keras_models, embeddings
 from keras import callbacks
 from keras.utils import np_utils
-from semanticgraph import io
+from graph import io
 import hyperopt as hy
 import json
 import ast
@@ -31,8 +31,8 @@ def f_train(params):
 
     predictions = model.predict(val_as_indices[:-1], batch_size=256, verbose=1)
     predictions_classes = np.argmax(predictions, axis=1)
-    _,_,acc = evaluation_utils.evaluate_instance_based(predictions_classes,
-                                                       val_as_indices[-1])
+    _,_,acc = metrics.evaluate_instance_based(predictions_classes,
+                                              val_as_indices[-1])
     print('Acc:', acc)
     with open(data_folder + "trials/" + model_name + "_current_trails.log", 'a') as ctf:
         ctf.write("{}\t{}\n".format(params, acc))
@@ -43,8 +43,8 @@ def evaluate(model, input, gold_output):
     predictions = model.predict(input, batch_size=256, verbose=1)
     if len(predictions.shape) == 3:
         predictions_classes = np.argmax(predictions, axis=2)
-        train_batch_f1 = evaluation_utils.evaluate_batch_based(predictions_classes,
-                                                               gold_output)
+        train_batch_f1 = metrics.evaluate_batch_based(predictions_classes,
+                                                      gold_output)
         print("Results (per batch): ", train_batch_f1)
         train_y_properties_stream = gold_output.reshape(gold_output.shape[0] * gold_output.shape[1])
         predictions_classes = predictions_classes.reshape(predictions_classes.shape[0] * predictions_classes.shape[1])
@@ -55,8 +55,8 @@ def evaluate(model, input, gold_output):
         predictions_classes = np.argmax(predictions, axis=1)
         train_y_properties_stream = gold_output
 
-    train_f1 = evaluation_utils.evaluate_instance_based(predictions_classes,
-                                                        train_y_properties_stream, empty_label=p0_index)
+    train_f1 = metrics.evaluate_instance_based(predictions_classes,
+                                               train_y_properties_stream, empty_label=p0_index)
     print("Results (per relation): ", train_f1)
     return predictions_classes
 
@@ -94,7 +94,7 @@ if __name__ == "__main__":
     with open(args.model_params) as f:
         model_params = json.load(f)
 
-    embeddings, word2idx = embedding_utils.load(args.word_embeddings)
+    embeddings, word2idx = embeddings.load(args.word_embeddings)
     print("Loaded embeddings:", embeddings.shape)
 
     training_data, _ = io.load_relation_graphs_from_file(args.train_set, load_vertices=True)
@@ -116,8 +116,8 @@ if __name__ == "__main__":
         with open(args.property_index) as f:
             property2idx = ast.literal_eval(f.read())
     else:
-        _, property2idx = embedding_utils.init_random({e["kbID"] for g in training_data
-                                                       for e in g["edgeSet"]} | {"P0"}, 1, add_all_zeroes=True, add_unknown=True)
+        _, property2idx = embeddings.init_random({e["kbID"] for g in training_data
+                                                  for e in g["edgeSet"]} | {"P0"}, 1, add_all_zeroes=True, add_unknown=True)
 
     max_sent_len = max(len(g["tokens"]) for g in training_data)
     print("Max sentence length:", max_sent_len)
@@ -128,12 +128,12 @@ if __name__ == "__main__":
     to_one_hot = np_utils.to_categorical
     graphs_to_indices = keras_models.to_indices
     if "Context" in model_name:
-        to_one_hot = embedding_utils.timedistributed_to_one_hot
+        to_one_hot = embeddings.timedistributed_to_one_hot
         graphs_to_indices = keras_models.to_indices_with_real_entities
     elif "CNN" in model_name:
         graphs_to_indices = keras_models.to_indices_with_relative_positions
 
-    _, position2idx = embedding_utils.init_random(np.arange(-max_sent_len, max_sent_len), 1, add_all_zeroes=True)
+    _, position2idx = embeddings.init_random(np.arange(-max_sent_len, max_sent_len), 1, add_all_zeroes=True)
     train_as_indices = list(graphs_to_indices(training_data, word2idx, property2idx, max_sent_len,
                                          embeddings=embeddings, position2idx=position2idx))
     print("Dataset shapes: {}".format([d.shape for d in train_as_indices]))

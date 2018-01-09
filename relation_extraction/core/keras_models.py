@@ -12,11 +12,11 @@ from keras import backend as K
 from keras import regularizers
 import tqdm
 
-from utils import embedding_utils, graph
-from semanticgraph import graph_utils
+from core import entity_extraction, embeddings
+from graph import graph_utils
 
 RESOURCES_FOLDER = "../resources/"
-property_blacklist = embedding_utils.load_blacklist(RESOURCES_FOLDER + "property_blacklist.txt")
+property_blacklist = embeddings.load_blacklist(RESOURCES_FOLDER + "property_blacklist.txt")
 
 
 def model_LSTMbaseline(p, embeddings, max_sent_len, n_out):
@@ -282,19 +282,19 @@ def to_indices(graphs, word2idx, property2idx, max_sent_len, replace_entities_wi
     y_matrix = np.zeros(num_edges, dtype="int16")
     index = 0
     for g in tqdm.tqdm(graphs, ascii=True):
-        token_ids = embedding_utils.get_idx_sequence(g["tokens"], word2idx)
+        token_ids = embeddings.get_idx_sequence(g["tokens"], word2idx)
         if len(token_ids) > max_sent_len:
             token_ids = token_ids[:max_sent_len]
         for edge in g["edgeSet"]:
             if edge['kbID'] not in property_blacklist:
                 sentences_matrix[index, :len(token_ids)] = \
-                    [word2idx[embedding_utils.unknown] if i in edge["left"] + edge["right"] else t for i, t in enumerate(token_ids)] \
+                    [word2idx[embeddings.unknown] if i in edge["left"] + edge["right"] else t for i, t in enumerate(token_ids)] \
                         if replace_entities_with_unkown else token_ids
                 entity_matrix[index, :len(token_ids)] = \
                     [m for _, m in graph_utils.get_entity_indexed_vector(token_ids, edge, mode="mark-bi")]
                 if mode == "train":
                     _, property_kbid, _ = graph_utils.edge_to_kb_ids(edge, g)
-                    property_kbid = property2idx.get(property_kbid, property2idx[embedding_utils.unknown])
+                    property_kbid = property2idx.get(property_kbid, property2idx[embeddings.unknown])
                     y_matrix[index] = property_kbid
                 index += 1
     return [sentences_matrix, entity_matrix, y_matrix]
@@ -324,7 +324,7 @@ def to_indices_with_real_entities(graphs, word2idx, property2idx, max_sent_len, 
     entity_matrix = np.zeros((len(graphs), MAX_EDGES_PER_GRAPH, max_sent_len), dtype="int8")
     y_matrix = np.zeros((len(graphs), MAX_EDGES_PER_GRAPH), dtype="int16")
     for index, g in enumerate(tqdm.tqdm(graphs, ascii=True)):
-        token_ids = embedding_utils.get_idx_sequence(g["tokens"], word2idx)
+        token_ids = embeddings.get_idx_sequence(g["tokens"], word2idx)
         if len(token_ids) > max_sent_len:
             token_ids = token_ids[:max_sent_len]
         sentences_matrix[index, :len(token_ids)] = token_ids
@@ -332,7 +332,7 @@ def to_indices_with_real_entities(graphs, word2idx, property2idx, max_sent_len, 
             entity_matrix[index, j, :len(token_ids)] = \
                 [m for _, m in graph_utils.get_entity_indexed_vector(token_ids, edge, mode="mark-bi")]
             _, property_kbid, _ = graph_utils.edge_to_kb_ids(edge, g)
-            property_kbid = property2idx.get(property_kbid, property2idx[embedding_utils.unknown])
+            property_kbid = property2idx.get(property_kbid, property2idx[embeddings.unknown])
             y_matrix[index, j] = property_kbid
     return sentences_matrix, entity_matrix, y_matrix
 
@@ -342,7 +342,7 @@ def graphs_for_evaluation(graphs, graphs_tagged):
     for i, g in enumerate(tqdm.tqdm(graphs, ascii=True, ncols=100)):
         for edge in g["edgeSet"]:
             new_g = {"edgeSet": [edge], "tokens": g['tokens']}
-            entities = [ne for ne, t in graph.extract_entities(graphs_tagged[i])]
+            entities = [ne for ne, t in entity_extraction.extract_entities(graphs_tagged[i])]
             entities += [edge['left'], edge['right']]
             new_g['vertexSet'] = [{'tokenpositions': ne} for ne in entities]
             new_g['edgeSet'].extend(get_negative_edges(new_g, limit=6))
@@ -358,7 +358,7 @@ def to_indices_with_relative_positions(graphs, word2idx, property2idx, max_sent_
     index = 0
     max_entity_index = max_sent_len - 1
     for g in tqdm.tqdm(graphs, ascii=True):
-        token_ids = embedding_utils.get_idx_sequence(g["tokens"], word2idx)
+        token_ids = embeddings.get_idx_sequence(g["tokens"], word2idx)
         if len(token_ids) > max_sent_len:
             token_ids = token_ids[:max_sent_len]
         for edge in g["edgeSet"]:

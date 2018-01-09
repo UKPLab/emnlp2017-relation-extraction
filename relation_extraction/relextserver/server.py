@@ -4,8 +4,8 @@ import logging
 
 from pycorenlp import StanfordCoreNLP
 
-from relation_extraction.utils import graph
-from relation_extraction.parsing.parser import RelParser
+from core import entity_extraction
+from relation_extraction.core.parser import RelParser
 
 relext = Blueprint("relext_server", __name__, static_folder='static')
 
@@ -45,8 +45,8 @@ def construct_relations_graph(input_text):
     tagged = get_tagged_from_server(input_text)
     logger.debug("Tagged: {}".format(tagged))
     logger.debug("Extract entities")
-    entity_fragments = graph.extract_entities(tagged)
-    edges = graph.generate_edges(entity_fragments)
+    entity_fragments = entity_extraction.extract_entities(tagged)
+    edges = entity_extraction.generate_edges(entity_fragments)
     non_parsed_graph = {'tokens': [t for t, _, _ in tagged],
                         'edgeSet': edges}
     parsed_graph = relparser.sem_parse(non_parsed_graph, verbose=False)

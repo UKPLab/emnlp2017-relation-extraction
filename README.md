@@ -46,26 +46,26 @@ http://semanticparsing.ukp.informatik.tu-darmstadt.de:5000/relation-extraction/
 ### Project structure:
 ```
 relation_extraction/
-├── apply-model.py
 ├── eval.py
 ├── model-train-and-test.py
 ├── notebooks
 ├── optimization_space.py
-├── parsing
+├── core
 │   ├── parser.py
+│   ├── embeddings.py
+│   ├── entity_extraction.py
 │   └── keras_models.py
 ├── relextserver
 │   └── server.py
-├── semanticgraph
+├── graph
 │   ├── graph_utils.py
 │   ├── io.py
 │   └── vis_utils.py
 ├── stanford_tag_dataset.py
-└── utils
-    ├── embedding_utils.py
-    ├── evaluation_utils.py
-    └── graph.py
+└── evaluation
+    └── metrics.py
 resources/
+├── properties-with-labels.txt
 └── property_blacklist.txt
 ```
 
@@ -77,16 +77,16 @@ resources/
         <td>relation_extraction/</td><td>Main Python module</td>
     </tr>
     <tr>
-        <td>relation_extraction/parsing</td><td>Models for joint relation extraction</td>
+        <td>relation_extraction/core</td><td>Models for joint relation extraction</td>
     </tr>
     <tr>
         <td>relation_extraction/relextserver</td><td>The code for the web demo.</td>
     </tr>
     <tr>
-        <td>relation_extraction/semanticgraph</td><td>IO and processing for relation graphs</td>
+        <td>relation_extraction/graph</td><td>IO and processing for relation graphs</td>
     </tr>
     <tr>
-        <td>relation_extraction/utils</td><td>IO and evaluation utils</td>
+        <td>relation_extraction/evaluation</td><td>Evaluation metrics</td>
     </tr>
     <tr>
         <td>resources/</td><td>Necessary resources</td>
