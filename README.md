@@ -105,12 +105,12 @@ resources/
 pip3 install -r requirements.txt
 ```
 
-3. Set the Keras (deep learning library) backend to Theano (even deeper deep learning library) with the following command:
+3. Set the Keras (deep learning library) backend to TensorFlow  with the following command:
 ```
-export KERAS_BACKEND=theano
+export KERAS_BACKEND=tensorflow
 ```
    You can also permanently change Keras backend (read more: https://keras.io/backend/). 
-   Note that in order to reproduce the experiments in the paper you have to use Theano as a backend.
+   Note that in order to reproduce the experiments in the paper you have to use Theano as a backend instead.
 
 4. Download the [data](https://www.ukp.tu-darmstadt.de/data/lexical-resources/wikipedia-wikidata-relations/), if you want to replicate the experiments from the paper.
 Extract the archive inside `emnlp2017-relation-extraction/data/wikipedia-wikidata/`.
@@ -118,12 +118,13 @@ Extract the archive inside `emnlp2017-relation-extraction/data/wikipedia-wikidat
 5. Download the [GloVe embeddings, glove.6B.zip](https://nlp.stanford.edu/projects/glove/)
 and put them into the folder `emnlp2017-relation-extraction/resources/glove/`.
 
-6. Set the Theano flags:
-```
- export THEANO_FLAGS=mode=FAST_RUN,device=cpu,floatX=float32
-```
+### Pre-trained models:
+* You can download the models that were used in the experiments [here](https://www.ukp.tu-darmstadt.de/fileadmin/user_upload/Group_UKP/data/wikipediaWikidata/EMNLP2017_DS_IG_relation_extraction_trained_models.zip)
+* See `Using pre-trained models.ipynb` for a detailed example on how to use the pre-trained models in your code
 
 #### Reproducing the experiments from the paper
+To reproduce the experiments please refer to the version of the code that was published with the paper:
+[tag emnlp17](https://github.com/UKPLab/emnlp2017-relation-extraction/tree/emnlp17)
 
 1. Complete the setup above 
 
@@ -137,10 +138,6 @@ python model-train-and-test.py model_ContextWeighted --mode train-test
 #### Notes
 
 - The web demo code is provided for information only. It is not meant to be run elsewhere.
-
-### Pre-trained models:
-* You can download the models that were used in the experiments [here](https://www.ukp.tu-darmstadt.de/fileadmin/user_upload/Group_UKP/data/wikipediaWikidata/EMNLP2017_DS_IG_relation_extraction_trained_models.zip)
-* We will soon make available updated models and will publish usage instructions
 
 #### Requirements:
 * Python 3.4

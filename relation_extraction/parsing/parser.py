@@ -20,7 +20,7 @@ max_sent_len = 36
 
 class RelParser:
 
-    def __init__(self, relext_model_name, data_folder="../data/", models_foldes="../trainedmodels/",
+    def __init__(self, relext_model_name, models_foldes="../trainedmodels/",
                  embeddings_location="glove/glove.6B.50d.txt", resource_folder="../resources/"):
 
         with open(models_foldes + relext_model_name + ".property2idx") as f:
@@ -32,7 +32,7 @@ class RelParser:
         with open(os.path.join(module_location, "../model_params.json")) as f:
             model_params = json.load(f)
 
-        self._embeddings, self._word2idx = embedding_utils.load(data_folder + embeddings_location)
+        self._embeddings, self._word2idx = embedding_utils.load(embeddings_location)
         print("Loaded embeddings:", self._embeddings.shape)
         self._idx2word = {v: k for k, v in self._word2idx.items()}
 
@@ -40,8 +40,7 @@ class RelParser:
                                                          np.zeros((len(self._word2idx), 50), dtype='float32'),
                                                          max_sent_len, len(self._property2idx))
 
-        with h5py.File(models_foldes + relext_model_name + ".kerasmodel", mode='r') as f:
-            self._model.load_weights_from_hdf5_group(f['model_weights'])
+        self._model.load_weights(models_foldes + relext_model_name + ".kerasmodel")
 
         with open(resource_folder + "properties-with-labels.txt") as infile:
             self._property2label = {l.split("\t")[0] : l.split("\t")[1].strip() for l in infile.readlines()}
