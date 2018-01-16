@@ -3,6 +3,7 @@
 #
 # Author: Daniil Sorokin (ukp.tu-darmstadt.de/ukp-home/)
 #
+import os
 import itertools
 import numpy as np
 np.random.seed(1)
@@ -16,7 +17,10 @@ from core import entity_extraction, embeddings
 from graph import graph_utils
 
 RESOURCES_FOLDER = "../resources/"
-property_blacklist = embeddings.load_blacklist(RESOURCES_FOLDER + "property_blacklist.txt")
+module_location = os.path.abspath(__file__)
+module_location = os.path.dirname(module_location)
+
+property_blacklist = embeddings.load_blacklist(os.path.join(module_location, "../../resources/property_blacklist.txt"))
 
 
 def model_LSTMbaseline(p, embeddings, max_sent_len, n_out):

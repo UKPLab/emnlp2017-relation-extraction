@@ -20,7 +20,7 @@ max_sent_len = 36
 class RelParser:
 
     def __init__(self, relext_model_name, models_foldes="../trainedmodels/",
-                 embeddings_location="glove/glove.6B.50d.txt", resource_folder="../resources/"):
+                 embeddings_location="glove/glove.6B.50d.txt"):
 
         with open(models_foldes + relext_model_name + ".property2idx") as f:
             self._property2idx = ast.literal_eval(f.read())
@@ -41,8 +41,8 @@ class RelParser:
 
         self._model.load_weights(models_foldes + relext_model_name + ".kerasmodel")
 
-        with open(resource_folder + "properties-with-labels.txt") as infile:
-            self._property2label = {l.split("\t")[0] : l.split("\t")[1].strip() for l in infile.readlines()}
+        with open(os.path.join(module_location, "../../resources/properties-with-labels.txt")) as infile:
+            self._property2label = {l.split("\t")[0]: l.split("\t")[1].strip() for l in infile.readlines()}
         self._idx2property = {v: k for k, v in self._property2idx.items()}
 
         self._graphs_to_indices = keras_models.to_indices_with_real_entities
