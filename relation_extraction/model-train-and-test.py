@@ -21,7 +21,7 @@ p0_index = 1
 
 
 def f_train(params):
-    model = getattr(keras_models, model_name)(params, embeddings, max_sent_len, n_out)
+    model = getattr(keras_models, model_name)(params, embedding_matrix, max_sent_len, n_out)
     callback_history = model.fit(train_as_indices[:-1],
                                  [train_y_properties_one_hot],
                                  nb_epoch=20, batch_size=256 if params['gpu'] else 200, verbose=1,
@@ -62,7 +62,6 @@ def evaluate(model, input, gold_output):
 
 
 def load_the_model(model_name, model_params, embeddings, max_sent_len, n_out):
-    import h5py
     print("Loading the best model")
     model = getattr(keras_models, model_name)(model_params, embeddings, max_sent_len, n_out)
     f = h5py.File(args.models_folder + model_name + ".kerasmodel", mode='r')
@@ -94,8 +93,8 @@ if __name__ == "__main__":
     with open(args.model_params) as f:
         model_params = json.load(f)
 
-    embeddings, word2idx = embeddings.load(args.word_embeddings)
-    print("Loaded embeddings:", embeddings.shape)
+    embedding_matrix, word2idx = embeddings.load(args.word_embeddings)
+    print("Loaded embeddings:", embedding_matrix.shape)
 
     training_data, _ = io.load_relation_graphs_from_file(args.train_set, load_vertices=True)
 
@@ -117,7 +116,7 @@ if __name__ == "__main__":
             property2idx = ast.literal_eval(f.read())
     else:
         _, property2idx = embeddings.init_random({e["kbID"] for g in training_data
-                                                  for e in g["edgeSet"]} | {"P0"}, 1, add_all_zeroes=True, add_unknown=True)
+                                                        for e in g["edgeSet"]} | {"P0"}, 1, add_all_zeroes=True, add_unknown=True)
 
     max_sent_len = max(len(g["tokens"]) for g in training_data)
     print("Max sentence length:", max_sent_len)
@@ -135,14 +134,14 @@ if __name__ == "__main__":
 
     _, position2idx = embeddings.init_random(np.arange(-max_sent_len, max_sent_len), 1, add_all_zeroes=True)
     train_as_indices = list(graphs_to_indices(training_data, word2idx, property2idx, max_sent_len,
-                                         embeddings=embeddings, position2idx=position2idx))
+                                              embeddings=embedding_matrix, position2idx=position2idx))
     print("Dataset shapes: {}".format([d.shape for d in train_as_indices]))
     training_data = None
     n_out = len(property2idx)
     print("N_out:", n_out)
 
     val_as_indices = list(graphs_to_indices(val_data, word2idx, property2idx, max_sent_len,
-                                       embeddings=embeddings, position2idx=position2idx))
+                                            embeddings=embedding_matrix, position2idx=position2idx))
     val_data = None
 
     if "train" in mode:
@@ -153,11 +152,11 @@ if __name__ == "__main__":
         print("Training the model")
         if "plus" in mode:
             print("Load model")
-            model = load_the_model(model_name, model_params, embeddings, max_sent_len, n_out)
+            model = load_the_model(model_name, model_params, embedding_matrix, max_sent_len, n_out)
 
         else:
             print("Initialize the model")
-            model = getattr(keras_models, model_name)(model_params, embeddings, max_sent_len, n_out)
+            model = getattr(keras_models, model_name)(model_params, embedding_matrix, max_sent_len, n_out)
 
         train_y_properties_one_hot = to_one_hot(train_as_indices[-1], n_out)
         val_y_properties_one_hot = to_one_hot(val_as_indices[-1], n_out)
@@ -188,7 +187,7 @@ if __name__ == "__main__":
             json.dump([(t['misc']['vals'], t['result']) for t in trials.trials], ftf)
 
     if "test" in mode:
-        model = load_the_model(model_name, model_params, embeddings, max_sent_len, n_out)
+        model = load_the_model(model_name, model_params, embedding_matrix, max_sent_len, n_out)
 
         print("Testing")
         print("Results on the training set")
@@ -199,5 +198,5 @@ if __name__ == "__main__":
         print("Results on the test set")
         test_set, _ = io.load_relation_graphs_from_file(args.test_set)
         test_as_indices = list(graphs_to_indices(
-            test_set, word2idx, property2idx, max_sent_len, embeddings=embeddings, position2idx=position2idx))
+            test_set, word2idx, property2idx, max_sent_len, embeddings=embedding_matrix, position2idx=position2idx))
         evaluate(model, test_as_indices[:-1], test_as_indices[-1])
