@@ -115,7 +115,7 @@ if __name__ == "__main__":
             property2idx = ast.literal_eval(f.read())
     else:
         _, property2idx = embeddings.init_random({e["kbID"] for g in training_data
-                                                        for e in g["edgeSet"]} | {"P0"}, 1, add_all_zeroes=True, add_unknown=True)
+                                                        for e in g["edgeSet"]}, 1, add_all_zeroes=True, add_unknown=True)
 
     max_sent_len = max(len(g["tokens"]) for g in training_data)
     print("Max sentence length:", max_sent_len)
