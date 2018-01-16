@@ -64,8 +64,7 @@ def evaluate(model, input, gold_output):
 def load_the_model(model_name, model_params, embeddings, max_sent_len, n_out):
     print("Loading the best model")
     model = getattr(keras_models, model_name)(model_params, embeddings, max_sent_len, n_out)
-    f = h5py.File(args.models_folder + model_name + ".kerasmodel", mode='r')
-    model.load_weights_from_hdf5_group(f['model_weights'])
+    model.load_weights(args.models_folder + model_name + ".kerasmodel")
     return model
 
 
