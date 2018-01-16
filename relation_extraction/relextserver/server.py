@@ -49,7 +49,7 @@ def construct_relations_graph(input_text):
     edges = entity_extraction.generate_edges(entity_fragments)
     non_parsed_graph = {'tokens': [t for t, _, _ in tagged],
                         'edgeSet': edges}
-    parsed_graph = relparser.sem_parse(non_parsed_graph, verbose=False)
+    parsed_graph = relparser.classify_graph_relations(non_parsed_graph, verbose=False)
     return parsed_graph
 
 

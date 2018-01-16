@@ -11,7 +11,6 @@ import ast
 import os
 
 from relation_extraction.core import keras_models
-from relation_extraction.graph import graph_utils
 from core import embeddings
 
 max_sent_len = 36
@@ -35,7 +34,7 @@ class RelParser:
         print("Loaded embeddings:", self._embeddings.shape)
         self._idx2word = {v: k for k, v in self._word2idx.items()}
 
-        self._model = keras_models.model_ContextWeighted(model_params,
+        self._model = getattr(keras_models, relext_model_name)(model_params,
                                                          np.zeros((len(self._word2idx), 50), dtype='float32'),
                                                          max_sent_len, len(self._property2idx))
 
@@ -45,14 +44,11 @@ class RelParser:
             self._property2label = {l.split("\t")[0]: l.split("\t")[1].strip() for l in infile.readlines()}
         self._idx2property = {v: k for k, v in self._property2idx.items()}
 
-        self._graphs_to_indices = keras_models.to_indices_with_real_entities
+        self._graphs_to_indices = keras_models.to_indices_with_extracted_entities
         if "CNN" in relext_model_name:
             self._graphs_to_indices = keras_models.to_indices_with_relative_positions
 
-    def sem_parse(self, g, verbose=False):
-        if verbose:
-            print(" ".join(g['tokens']))
-
+    def classify_graph_relations(self, g):
         data_as_indices = list(self._graphs_to_indices([g], self._word2idx, self._property2idx, max_sent_len, mode="test"))
         probabilities = self._model.predict(data_as_indices[:-1], verbose=0)
         if len(probabilities) == 0:
@@ -63,11 +59,6 @@ class RelParser:
             if i < len(probabilities):
                 e['kbID'] = self._idx2property[classes[i]]
                 e["lexicalInput"] = self._property2label[e['kbID']] if e['kbID'] in self._property2label else embeddings.all_zeroes
-                if verbose:
-                    graph_utils.print_edge(e, g)
-                    sorted_probabilities = sorted(enumerate(probabilities[i]), key=lambda x: x[1], reverse=True)
-                    print("{} ({:.4}), {}".format(e['kbID'], np.max(probabilities[i]),
-                                                  [(self._idx2property[p_id], p_prob) for p_id, p_prob in sorted_probabilities[1:4]]))
             else:
                 e['kbID'] = "P0"
                 e["lexicalInput"] = embeddings.all_zeroes

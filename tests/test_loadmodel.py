@@ -15,7 +15,7 @@ def test_load_relationparser():
     edges = entity_extraction.generate_edges(entity_fragments)
     non_parsed_graph = {'tokens': [t for t, _, _ in tagged],
                     'edgeSet': edges}
-    graph_with_relations = relparser.sem_parse(non_parsed_graph)
+    graph_with_relations = relparser.classify_graph_relations(non_parsed_graph)
     assert [e['kbID'] for e in graph_with_relations['edgeSet']] == ['P800', 'P136', 'P136']
 
 

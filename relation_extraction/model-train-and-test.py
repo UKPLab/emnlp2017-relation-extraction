@@ -129,7 +129,7 @@ if __name__ == "__main__":
     graphs_to_indices = keras_models.to_indices
     if "Context" in model_name:
         to_one_hot = embeddings.timedistributed_to_one_hot
-        graphs_to_indices = keras_models.to_indices_with_real_entities
+        graphs_to_indices = keras_models.to_indices_with_extracted_entities
     elif "CNN" in model_name:
         graphs_to_indices = keras_models.to_indices_with_relative_positions
 

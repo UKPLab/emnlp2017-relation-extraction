@@ -4,7 +4,6 @@
 # Author: Daniil Sorokin (ukp.tu-darmstadt.de/ukp-home/)
 #
 import os
-import itertools
 import numpy as np
 np.random.seed(1)
 
@@ -13,7 +12,7 @@ from keras import backend as K
 from keras import regularizers
 import tqdm
 
-from core import entity_extraction, embeddings
+from core import embeddings
 from graph import graph_utils
 
 RESOURCES_FOLDER = "../resources/"
@@ -249,28 +248,6 @@ class MaskedGlobalMaxPooling1D(layers.pooling._GlobalPooling1D):
         return None
 
 
-def get_negative_edges(g, limit=1):
-    """
-    :param g: graphs a dictionary
-    :param limit: max number of edges to generate
-    :return: a list of negative edges
-    >>> get_negative_edges({'edgeSet': [{'kbID': 'P397', 'left': [8], 'right': [23]}, \
-    {'kbID': 'P376', 'left': [80], 'right': [8]}], 'vertexSet': [{'tokenpositions': [8]}, {'tokenpositions': [23]}, {'tokenpositions': [80]}]}) \
-    == [{'left': [23], 'kbID': 'P0', 'right': [80]}]
-    True
-    """
-    vertex_pairs = itertools.combinations(g["vertexSet"], 2)
-    existing_edges = [p for e in g["edgeSet"] for p in [(e['left'], e['right']), (e['right'], e['left'])]]
-    negative_edges = []
-    for vertex_pair in vertex_pairs:
-        left_right = (vertex_pair[0]['tokenpositions'], vertex_pair[1]['tokenpositions'])
-        if left_right not in existing_edges:
-            negative_edges.append({'kbID': 'P0', 'left': left_right[0], 'right': left_right[1]})
-    if len(negative_edges) > limit:
-        negative_edges = np.random.choice(negative_edges, limit, replace=False)
-    return list(negative_edges)
-
-
 def to_indices(graphs, word2idx, property2idx, max_sent_len, replace_entities_with_unkown = False, mode='train', **kwargs):
     """
     :param graphs:
@@ -307,7 +284,7 @@ def to_indices(graphs, word2idx, property2idx, max_sent_len, replace_entities_wi
 MAX_EDGES_PER_GRAPH = 7
 
 
-def to_indices_with_real_entities(graphs, word2idx, property2idx, max_sent_len, mode='train', **kwargs):
+def to_indices_with_extracted_entities(graphs, word2idx, property2idx, max_sent_len, mode='train', **kwargs):
     """
     :param graphs:
     :param word2idx:
@@ -339,19 +316,6 @@ def to_indices_with_real_entities(graphs, word2idx, property2idx, max_sent_len, 
             property_kbid = property2idx.get(property_kbid, property2idx[embeddings.unknown])
             y_matrix[index, j] = property_kbid
     return sentences_matrix, entity_matrix, y_matrix
-
-
-def graphs_for_evaluation(graphs, graphs_tagged):
-    for_evaluation = []
-    for i, g in enumerate(tqdm.tqdm(graphs, ascii=True, ncols=100)):
-        for edge in g["edgeSet"]:
-            new_g = {"edgeSet": [edge], "tokens": g['tokens']}
-            entities = [ne for ne, t in entity_extraction.extract_entities(graphs_tagged[i])]
-            entities += [edge['left'], edge['right']]
-            new_g['vertexSet'] = [{'tokenpositions': ne} for ne in entities]
-            new_g['edgeSet'].extend(get_negative_edges(new_g, limit=6))
-            for_evaluation.append(new_g)
-    return for_evaluation
 
 
 def to_indices_with_relative_positions(graphs, word2idx, property2idx, max_sent_len, position2idx, **kwargs):
