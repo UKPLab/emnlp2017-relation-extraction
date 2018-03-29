@@ -29,7 +29,7 @@ Please, refer to the paper for more details.
 
 The dataset described in the paper can be found here:
  * https://www.ukp.tu-darmstadt.de/data/lexical-resources/wikipedia-wikidata-relations/
- 
+
  
 ### Contacts:
 If you have any questions regarding the code, please, don't hesitate to contact the authors or report an issue.
@@ -113,10 +113,10 @@ export KERAS_BACKEND=tensorflow
    Note that in order to reproduce the experiments in the paper you have to use Theano as a backend instead.
 
 4. Download the [data](https://www.ukp.tu-darmstadt.de/data/lexical-resources/wikipedia-wikidata-relations/), if you want to replicate the experiments from the paper.
-Extract the archive inside `emnlp2017-relation-extraction/data/wikipedia-wikidata/`.
+Extract the archive inside `emnlp2017-relation-extraction/data/wikipedia-wikidata/`. The data was preprocessed using Stanford Core NLP 3.7.0 models. See `stanford_tag_dataset.py` for more information.
 
 5. Download the [GloVe embeddings, glove.6B.zip](https://nlp.stanford.edu/projects/glove/)
-and put them into the folder `emnlp2017-relation-extraction/resources/glove/`.
+and put them into the folder `emnlp2017-relation-extraction/resources/glove/`. You can change the path to word embeddings in the `model_params.json` file if needed.
 
 ### Pre-trained models:
 * You can download the models that were used in the experiments [here](https://www.ukp.tu-darmstadt.de/fileadmin/user_upload/Group_UKP/data/wikipediaWikidata/EMNLP2017_DS_IG_relation_extraction_trained_models.zip)
@@ -126,13 +126,20 @@ and put them into the folder `emnlp2017-relation-extraction/resources/glove/`.
 To reproduce the experiments please refer to the version of the code that was published with the paper:
 [tag emnlp17](https://github.com/UKPLab/emnlp2017-relation-extraction/tree/emnlp17)
 
+In any other case, we recommend using the most recent version.
+
 1. Complete the setup above 
 
-2. Run `python model-train-and-test.py` in `emnlp2017-relation-extraction/relation_extraction/` to see the list of parameters
+2. Run `python model_train.py` in `emnlp2017-relation-extraction/relation_extraction/` to see the list of parameters
 
-3. If you put the data into teh default folders you can train the `ContextWeighted` model with the following command:
+3. If you put the data into the default folders you can train the `ContextWeighted` model with the following command:
 ```
-python model-train-and-test.py model_ContextWeighted --mode train-test
+python model_train.py model_ContextWeighted train-test
+```
+
+4. Run the following command to compute the precision-recall curves:
+```
+python precision_recall_curves.py model_ContextWeighted ../data/wikipedia-wikidata/enwiki-20160501/semantic-graphs-filtered-held-out.02_06.json
 ```
 
 #### Notes
@@ -141,6 +148,8 @@ python model-train-and-test.py model_ContextWeighted --mode train-test
 
 #### Requirements:
 * Python 3.4
+* Keras 2.1.5
+* TensorFlow 1.6.0
 * See requirements.txt for library requirements. 
 
 ### License:

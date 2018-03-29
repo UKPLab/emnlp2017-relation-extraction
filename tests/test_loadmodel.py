@@ -4,9 +4,7 @@ from core import parser, entity_extraction
 
 
 def test_load_relationparser():
-    relparser = parser.RelParser("model_ContextWeighted",
-                          models_foldes="../trainedmodels/",
-                          embeddings_location="../../resources/embeddings/glove/glove.6B.50d.txt")
+    relparser = parser.RelParser("model_ContextWeighted", models_foldes="../trainedmodels/")
     tagged = [('Star', 'O', 'NNP'), ('Wars', 'O', 'NNP'), ('VII', 'O', 'NNP'), ('is', 'O', 'VBZ'), ('an', 'O', 'DT'),
               ('American', 'MISC', 'JJ'), ('space', 'O', 'NN'), ('opera', 'O', 'NN'), ('epic', 'O', 'NN'),
               ('film', 'O', 'NN'), ('directed', 'O', 'VBN'), ('by', 'O', 'IN'), ('J.', 'PERSON', 'NNP'),

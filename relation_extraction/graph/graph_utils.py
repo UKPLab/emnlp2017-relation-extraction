@@ -11,6 +11,8 @@ kbid_numerical = "_NUMERICAL"
 kbid_date = "_DATE"
 kbid_empty = "_EMPTY"
 
+LEGACY_MODE = True
+
 
 def vertex_by_token_position(graph, token_positions):
     """
@@ -77,7 +79,21 @@ def edge_to_kb_ids(edge, g):
     return left_kbid, property_kbid, right_kbid
 
 
-def get_entity_indexed_vector(tokens, edge, mode="mark"):
+def get_sentence_boundaries(tokens, edge):
+    sent_left_border = len(tokens)
+    sent_right_border = len(tokens)
+    if edge["left"] + edge["right"]:
+        entities_left = min(edge["left"] + edge["right"])
+        entities_right = max(edge["left"] + edge["right"])
+        if 0 < entities_left < len(tokens):
+            sent_left_border = max(i for i in range(entities_left) if tokens[i] == '.' or i == 0)
+        if 0 < entities_right < len(tokens):
+            sent_right_border = min(i for i in range(entities_right, len(tokens))
+                                    if tokens[i] == '.' or i == len(tokens) - 1)
+    return sent_left_border, sent_right_border
+
+
+def get_entity_indexed_vector(tokens, edge, mode="mark-bi"):
     """
     Incorporates the current edge right and left entities into the sentence index representation.
     Default mode: Each token that belongs to an entities is augmented with an 2 marker, the rest of the
@@ -88,11 +104,17 @@ def get_entity_indexed_vector(tokens, edge, mode="mark"):
     :param edge: edge from a graph
     :param mode: incorporation mode: {"mark","position","bio","mark-bi", "bio-bi"}
     :return: list of tuples where the second values is a binary variable indicating entities
+    >>> get_entity_indexed_vector(["The", "MIT", "ATIS", "System", ".", "This", "paper", "describes", "the", "status", "."], {"left": [6], "right": [9]})
+    [('The', 4), ('MIT', 4), ('ATIS', 4), ('System', 4), ('.', 4), ('This', 1), ('paper', 2), ('describes', 1), ('the', 1), ('status', 3), ('.', 1)]
     """
+    sent_left_border, sent_right_border = get_sentence_boundaries(tokens, edge)
     if mode == "mark":
-        return [(t, 2) if i in edge["left"] + edge["right"] else (t, 1) for i, t in enumerate(tokens)]
+        return [(t, 2) if i in edge["left"] + edge["right"]
+                else (t, 1) if sent_left_border <= i <= sent_right_border else (t, 3 if not LEGACY_MODE else 1) for i, t in enumerate(tokens)]
     if mode == "mark-bi":
-        return [(t, 2) if i in edge["left"] else (t, 3) if i in edge["right"] else (t, 1) for i, t in enumerate(tokens)]
+        return [(t, 2) if i in edge["left"]
+                else (t, 3) if i in edge["right"]
+                else (t, 1) if sent_left_border <= i <= sent_right_border else (t, 4 if not LEGACY_MODE else 1) for i, t in enumerate(tokens)]
     if mode == "bio":
         b_tokens = edge["left"][:1] + edge["right"][:1]
         i_tokens = edge["left"][1:] + edge["right"][1:]

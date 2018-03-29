@@ -28,7 +28,7 @@ def load_word_index(path):
     """
     word2idx = {}  # Maps a word to the index in the embeddings matrix
 
-    with open(path, 'r') as fIn:
+    with open(path, 'r', encoding='utf8') as fIn:
         idx = 1
         for line in fIn:
             split = line.strip().split(' ')
@@ -50,7 +50,7 @@ def load(path):
     word2idx = {}  # Maps a word to the index in the embeddings matrix
     embeddings = []
 
-    with open(path, 'r') as fIn:
+    with open(path, 'r', encoding='utf8') as fIn:
         idx = 1               
         for line in fIn:
             split = line.strip().split(' ')                

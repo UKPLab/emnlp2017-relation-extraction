@@ -1,9 +1,14 @@
-{"rnn1": "LSTM",
+{
   "rnn1_layers": 1,
+  "bidirectional": false,
   "units1": 256,
   "dropout1": 0.5,
   "optimizer": "adam",
   "window_size": 3,
   "position_emb": 3,
-  "gpu": true
+  "batch_size": 128,
+  "gpu": true,
+  "property2idx": "property2idx.txt",
+  "wordembeddings": "../../resources/embeddings/glove/glove.6B.50d.txt",
+  "max_sent_len": 36
 }
