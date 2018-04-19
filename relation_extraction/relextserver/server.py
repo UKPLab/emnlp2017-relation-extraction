@@ -13,8 +13,7 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.ERROR)
 logger.setLevel(logging.DEBUG)
 
-relparser = RelParser("model_ContextWeighted", models_foldes="relation-extraction/trainedmodels/",
-                      data_folder="relation-extraction/data/", resource_folder="relation-extraction/resources/")
+relparser = RelParser("model_ContextWeighted", models_folder="relation-extraction/trainedmodels/")
 
 corenlp = StanfordCoreNLP('http://semanticparsing:9000')
 corenlp_properties = {
@@ -49,7 +48,7 @@ def construct_relations_graph(input_text):
     edges = entity_extraction.generate_edges(entity_fragments)
     non_parsed_graph = {'tokens': [t for t, _, _ in tagged],
                         'edgeSet': edges}
-    parsed_graph = relparser.classify_graph_relations(non_parsed_graph, verbose=False)
+    parsed_graph = relparser.classify_graph_relations([non_parsed_graph])[0]
     return parsed_graph
 
 

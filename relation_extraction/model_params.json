@@ -9,6 +9,6 @@
   "batch_size": 128,
   "gpu": true,
   "property2idx": "property2idx.txt",
-  "wordembeddings": "../../resources/embeddings/glove/glove.6B.50d.txt",
+  "wordembeddings": "/home/local/UKP/sorokin/IdeaProjects/resources/embeddings/glove/glove.6B.50d.txt",
   "max_sent_len": 36
 }

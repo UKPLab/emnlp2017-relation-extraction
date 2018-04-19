@@ -320,15 +320,7 @@ def to_indices(graphs, word2idx, max_sent_len):
 
 def to_indices_with_extracted_entities(graphs, word2idx):
     max_sent_len = model_params['max_sent_len']
-    graphs_to_process = []
-    for g in graphs:
-        if len(g['edgeSet']) > 0:
-            if len(g['edgeSet']) <= MAX_EDGES_PER_GRAPH:
-                graphs_to_process.append(g)
-            else:
-                for i in range(0, len(g['edgeSet']), MAX_EDGES_PER_GRAPH):
-                    graphs_to_process.append({"tokens": g["tokens"], "edgeSet": g["edgeSet"][i:i+ MAX_EDGES_PER_GRAPH]})
-    graphs = graphs_to_process
+    graphs = split_graphs(graphs)
     sentences_matrix = np.zeros((len(graphs), max_sent_len), dtype="int32")
     entity_matrix = np.zeros((len(graphs), MAX_EDGES_PER_GRAPH, max_sent_len), dtype="int8")
     y_matrix = np.zeros((len(graphs), MAX_EDGES_PER_GRAPH), dtype="int16")
@@ -344,6 +336,19 @@ def to_indices_with_extracted_entities(graphs, word2idx):
             property_kbid = property2idx.get(property_kbid, property2idx[embeddings.all_zeroes])
             y_matrix[index, j] = property_kbid
     return sentences_matrix, entity_matrix, y_matrix
+
+
+def split_graphs(graphs):
+    graphs_to_process = []
+    for g in graphs:
+        if len(g['edgeSet']) > 0:
+            if len(g['edgeSet']) <= MAX_EDGES_PER_GRAPH:
+                graphs_to_process.append(g)
+            else:
+                for i in range(0, len(g['edgeSet']), MAX_EDGES_PER_GRAPH):
+                    graphs_to_process.append(
+                        {**g, "edgeSet": g["edgeSet"][i:i + MAX_EDGES_PER_GRAPH]})
+    return graphs_to_process
 
 
 def to_indices_with_relative_positions(graphs, word2idx):
