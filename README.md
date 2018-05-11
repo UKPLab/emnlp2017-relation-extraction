@@ -134,7 +134,7 @@ In any other case, we recommend using the most recent version.
 
 3. If you put the data into the default folders you can train the `ContextWeighted` model with the following command:
 ```
-python model_train.py model_ContextWeighted train-test
+python model_train.py model_ContextWeighted train ../data/wikipedia-wikidata/enwiki-20160501/semantic-graphs-filtered-training.02_06.json ../data/wikipedia-wikidata/enwiki-20160501/semantic-graphs-filtered-validation.02_06.json
 ```
 
 4. Run the following command to compute the precision-recall curves:

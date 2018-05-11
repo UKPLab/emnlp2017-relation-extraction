@@ -294,7 +294,8 @@ class MaskedGlobalMaxPooling1D(layers.pooling._GlobalPooling1D):
         return None
 
 
-def to_indices(graphs, word2idx, max_sent_len):
+def to_indices(graphs, word2idx):
+    max_sent_len = model_params['max_sent_len']
     num_edges = sum(1 for g in graphs for e in g['edgeSet'])
     sentences_matrix = np.zeros((num_edges, max_sent_len), dtype="int32")
     entity_matrix = np.zeros((num_edges, max_sent_len), dtype="int8")

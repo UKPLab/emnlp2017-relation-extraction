@@ -88,15 +88,13 @@ if __name__ == "__main__":
     elif "CNN" in model_name:
         graphs_to_indices = keras_models.to_indices_with_relative_positions
 
-    train_as_indices = list(graphs_to_indices(training_data, word2idx, max_sent_len,
-                                              embeddings=embedding_matrix, position2idx=keras_models.position2idx))
+    train_as_indices = list(graphs_to_indices(training_data, word2idx))
     print("Dataset shapes: {}".format([d.shape for d in train_as_indices]))
     training_data = None
     n_out = len(keras_models.property2idx)
     print("N_out:", n_out)
 
-    val_as_indices = list(graphs_to_indices(val_data, word2idx, max_sent_len,
-                                            embeddings=embedding_matrix, position2idx=keras_models.position2idx))
+    val_as_indices = list(graphs_to_indices(val_data, word2idx))
     val_data = None
 
     if "train" in mode:
