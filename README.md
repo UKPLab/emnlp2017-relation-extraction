@@ -11,12 +11,14 @@ Please use the following citation:
 
 ```
 @inproceedings{TUD-CS-2017-0119,
-	title = {Context-Aware Representations for Knowledge Base Relation Extraction},
+	title = {{Context-Aware Representations for Knowledge Base Relation Extraction}},
 	author = {Sorokin, Daniil and Gurevych, Iryna},
 	booktitle = {Proceedings of the 2017 Conference on Empirical Methods in Natural Language Processing (EMNLP)},
-	pages = {(to appear)},
+	pages = {1784-1789},
 	year = {2017},
 	location = {Copenhagen, Denmark},
+	publisher = {Association for Computational Linguistics},
+	doi = {10.18653/v1/D17-1188}
 }
 ```
 
