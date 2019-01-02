@@ -157,7 +157,7 @@ python precision_recall_curves.py model_ContextWeighted ../data/wikipedia-wikida
 - The web demo code is provided for information only. It is not meant to be run elsewhere.
 
 #### Requirements:
-* Python 3.4
+* Python 3.6
 * Keras 2.1.5
 * TensorFlow 1.6.0
 * See requirements.txt for library requirements. 
