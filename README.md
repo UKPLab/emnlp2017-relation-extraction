@@ -40,18 +40,22 @@ If you have any questions regarding the code, please, don't hesitate to contact 
   * https://www.informatik.tu-darmstadt.de/ukp/
   * https://www.tu-darmstadt.de
   
-### Demo:
-
-You can try out the model on single sentences in our demo: 
-
-http://semanticparsing.ukp.informatik.tu-darmstadt.de:5000/relation-extraction/
-
 ### UKP Lab work knowledge bases:
 If you came here looking for our other work on linking text to Wikidata you can also find useful the following links
 
 * Wikidata Entity Linking: https://github.com/UKPLab/starsem2018-entity-linking
 * Graph Neural Networks for Knowledge Base Question Answering: https://github.com/UKPLab/coling2018-graph-neural-networks-question-answering
 * Question Answering Demo UI: https://github.com/UKPLab/emnlp2018-question-answering-interface
+
+### Demo:
+
+You can try out the model on single sentences in our demo: 
+
+http://semanticparsing.ukp.informatik.tu-darmstadt.de:5000/relation-extraction/
+
+### Wikipedia-Wikidata sentence-level relation data set
+
+*  Download the data set from the paper [here](https://www.informatik.tu-darmstadt.de/ukp/research_6/data/lexical_resources/wikipedia_wikidata_relations/). See the data set ReadMe for more information on the format and see the [paper](http://aclweb.org/anthology/D17-1188) on data set construction.
 
 ### Project structure:
 ```
