@@ -4,7 +4,7 @@
 
 
 Accompanying repository for our **EMNLP 2017 paper** ([full paper](http://aclweb.org/anthology/D17-1188)). It contains the code to replicate the experiments and the pre-trained models for sentence-level relation extraction. 
-See [below](#ukp-lab-work-knowledge-bases) for links to other work on knowledge bases, question answering and graph neural networks.
+See [below](#ukp-lab's-work-on-knowledge-bases) for links to other work on knowledge bases, question answering and graph neural networks.
 
 > This repository contains experimental software and is published for the sole purpose of giving additional background details on the respective publication.
  
@@ -39,19 +39,21 @@ If you have any questions regarding the code, please, don't hesitate to contact 
   * Daniil Sorokin, lastname@ukp.informatik.tu-darmstadt.de, [personal page](https://www.informatik.tu-darmstadt.de/ukp/ukp_home/staff_ukp/detailseite_mitarbeiter_1_41984.en.jsp)
   * https://www.informatik.tu-darmstadt.de/ukp/
   * https://www.tu-darmstadt.de
+
+### Demo:
+
+You can try out the relation extraction model on single sentences in our demo: 
+
+http://semanticparsing.ukp.informatik.tu-darmstadt.de:5000/relation-extraction/
+
   
-### UKP Lab work knowledge bases:
+### UKP Lab's work on knowledge bases:
 If you came here looking for our other work on linking text to Wikidata you can also find useful the following links
 
 * Wikidata Entity Linking: https://github.com/UKPLab/starsem2018-entity-linking
 * Graph Neural Networks for Knowledge Base Question Answering: https://github.com/UKPLab/coling2018-graph-neural-networks-question-answering
 * Question Answering Demo UI: https://github.com/UKPLab/emnlp2018-question-answering-interface
 
-### Demo:
-
-You can try out the model on single sentences in our demo: 
-
-http://semanticparsing.ukp.informatik.tu-darmstadt.de:5000/relation-extraction/
 
 ### Wikipedia-Wikidata sentence-level relation data set
 
