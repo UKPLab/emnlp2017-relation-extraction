@@ -4,7 +4,7 @@
 
 
 Accompanying repository for our **EMNLP 2017 paper** ([full paper](http://aclweb.org/anthology/D17-1188)). It contains the code to replicate the experiments and the pre-trained models for sentence-level relation extraction. 
-See [below](#ukp-lab's-work-on-knowledge-bases) for links to other work on knowledge bases, question answering and graph neural networks.
+See [below](#ukp-labs-work-on-knowledge-bases) for links to other work on knowledge bases, question answering and graph neural networks.
 
 > This repository contains experimental software and is published for the sole purpose of giving additional background details on the respective publication.
  
