@@ -35,8 +35,8 @@ The dataset described in the paper can be found here:
 
  
 ### Contacts:
-If you have any questions regarding the code, please, don't hesitate to contact the authors or report an issue.
-  * Daniil Sorokin, lastname@ukp.informatik.tu-darmstadt.de, [personal page](https://www.informatik.tu-darmstadt.de/ukp/ukp_home/staff_ukp/detailseite_mitarbeiter_1_41984.en.jsp)
+If you have any questions regarding the code, please, don't hesitate to contact the authors or best report an issue here.
+  * Daniil Sorokin, [personal page](https://daniilsorokin.github.io)
   * https://www.informatik.tu-darmstadt.de/ukp/
   * https://www.tu-darmstadt.de
 
