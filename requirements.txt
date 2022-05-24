@@ -11,5 +11,5 @@ PyYAML==3.12
 pycorenlp==0.3.0
 scipy==0.19.1
 six==1.10.0
-tensorflow==1.6.0
+tensorflow==2.6.4
 tqdm==4.15.0
